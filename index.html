@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇦🇺 2027 墨爾本親子自駕探索之旅</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        eucalyptus: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        ochre: {
+                            50: '#fffbe6',
+                            100: '#fff3b3',
+                            500: '#d97706',
+                            600: '#b45309',
+                            700: '#92400e',
+                        },
+                        warmbg: '#faf8f5',
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- React & ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- Babel CDN for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #f7f5f0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+            color: #2d3748;
+        }
+        .tab-active {
+            border-bottom: 3px solid #b45309;
+            color: #b45309;
+            font-weight: 700;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Sample data for Itinerary
+        const ITINERARY_DATA = [
+            {
+                day: 1,
+                date: "2027/06/27 (日)",
+                title: "抵達墨爾本與亞拉河畔散策",
+                subtitle: "啟程前往南半球文化之都，享受溫馨夜晚",
+                icon: "plane",
+                driveTime: "約 35-45 分鐘 (機場 -> 市區飯店)",
+                highlights: ["墨爾本機場取車", "市區 Check-in", "亞拉河畔 (Yarra River) 夕陽散步", "南岸景觀晚餐"],
+                timeline: [
+                    { time: "09:30", activity: "✈️ 抵達墨爾本國際機場 (MEL)", desc: "順利過海關、領取行李並辦理 Optus / Telstra 網卡。" },
+                    { time: "10:30", activity: "🚗 櫃檯辦理自駕取車", desc: "前往租車櫃檯（AVIS / Hertz 等），確認預訂車款並安裝 2 張兒童安全座椅。" },
+                    { time: "11:45", activity: "🏨 飯店放置行李與休整", desc: "驅車前往市區飯店，辦理寄放行李，休息讓小朋友稍微拉伸放鬆。" },
+                    { time: "13:00", activity: "🍔 午餐：南岸 Southbank 景觀餐廳", desc: "享用精致澳洲早午餐或漢堡料理，欣賞亞拉河畔景色。" },
+                    { time: "15:30", activity: "🌉 聯邦廣場與亞拉河畔散散步", desc: "沿著 Yarra River 漫步，探訪 Federation Square 與聖保羅大教堂外觀。" },
+                    { time: "18:00", activity: "🍽️ 晚餐：亞拉河畔河景餐廳", desc: "享受溫馨的家庭晚餐，早點返回飯店休息適應時差。" }
+                ],
+                tips: "💡 **親子提醒**：第一天過海關與取車耗時較長，請在隨身包準備足夠的兒童零食與保暖外套。"
+            },
+            {
+                day: 2,
+                date: "2027/06/28 (一)",
+                title: "野生動物 Safari 與百年蒸汽火車",
+                subtitle: "與野生動物近距離接觸，體驗伸腳出車廂的經典火車之旅",
+                icon: "compass",
+                driveTime: "約 1.5 小時 (市區 ➔ 威勒比 ➔ 丹頓農)",
+                highlights: ["威勒比 Safari 巴士", "金獅面狨與長頸鹿", "普芬比利蒸汽火車 (Puffing Billy)", "丹頓農山區"],
+                timeline: [
+                    { time: "08:30", activity: "🚗 驅車前往威勒比野生動物園", desc: "由市區出發前往 Werribee Open Range Zoo（車程約 35 分鐘）。" },
+                    { time: "09:30", activity: "🦁 威勒比野生動物園搭乘 Safari 游獵巴士", desc: "搭乘免費游獵巴士深入開放草原區，近距離觀察長頸鹿、犀牛、斑馬與金獅面狨。" },
+                    { time: "12:00", activity: "🥪 園區內享用輕食午餐", desc: "於 Meerkat Bistro 享用午餐，旁邊還可以近距離看狐獴探頭！" },
+                    { time: "13:00", activity: "🚗 驅車前往丹頓農山脈 Belgrave 車站", desc: "車程約 1 小時 10 分鐘，沿途欣賞山林風貌。" },
+                    { time: "14:30", activity: "🚂 普芬比利蒸汽火車體驗 (Belgrave ➔ Lakeside)", desc: "搭乘歷史悠久的百年蒸汽火車，兩位小朋友可體驗把腳伸出車廂外的經典刺激體驗！" },
+                    { time: "16:30", activity: "☕ Lakeside Park 湖畔散步與熱可可", desc: "在 Lakeside 站休息，享用溫熱可可與點心。" },
+                    { time: "18:00", activity: "🥧 晚餐：Pie in the Sky 傳統澳洲鹹派", desc: "品嚐獲得多次金牌的極品肉派，隨後開車返回市區飯店。" }
+                ],
+                tips: "🚂 **火車預訂提醒**：普芬比利蒸汽火車非常熱門，建議提前 2-3 個月於官網預訂 Belgrave 至 Lakeside 往返車票！"
+            },
+            {
+                day: 3,
+                date: "2027/06/29 (二)",
+                title: "湖山滑雪度假村賞雪與巧克力工廠",
+                subtitle: "踏入銀白冰雪世界玩雪盆，再到亞拉河谷品嚐濃郁甜點",
+                icon: "snowflake",
+                driveTime: "約 3.5 小時 (山路請注意行車安全)",
+                highlights: ["Lake Mountain 雪盆體驗 (Tobogganing)", "堆雪人大戰", "Yarra Valley 巧克力工廠", "熱可可試吃"],
+                timeline: [
+                    { time: "07:30", activity: "🚗 早起啟程前往湖山滑雪度假村 (Lake Mountain)", desc: "墨爾本冬季雪景聖地，車程約 2 小時。沿途路況良好，但請留意氣溫與結霜。" },
+                    { time: "09:30", activity: "❄️ 湖山度假村雪地狂歡", desc: "租用雪盆 (Toboggan)，在兒童專屬滑雪道體驗高速滑雪樂趣，一起堆雪人打雪仗！" },
+                    { time: "12:30", activity: "☕ 溫馨雪地餐廳午餐", desc: "在山頂中心享用熱湯、薯條與熱咖啡補充體力。" },
+                    { time: "13:30", activity: "🚗 驅車下山前往亞拉河谷 (Yarra Valley)", desc: "車程約 1 小時，沿途經過壯麗的墨爾本鄉村酒莊景緻。" },
+                    { time: "14:45", activity: "🍫 Yarra Valley Chocolaterie & Ice Creamery", desc: "參觀廣闊的巧克力工廠！免費試吃三大匙巧克力，享用手工精緻冰淇淋與招牌熱可可。" },
+                    { time: "17:30", activity: "🍷 亞拉河谷酒莊景觀散步", desc: "順道造訪知名酒莊 (如 Rochford 或 Domaine Chandon) 拍攝美照。" },
+                    { time: "19:00", activity: "🍽️ 晚餐：返程市區或沿途特色牛排館", desc: "享用美味溫馨晚餐，結束充滿驚喜的一天。" }
+                ],
+                tips: "❄️ **裝備建議**：山區氣溫接近 0-5°C，請務必幫小朋友穿著防水保暖外套、手套、毛帽與防水靴。"
+            },
+            {
+                day: 4,
+                date: "2027/06/30 (三)",
+                title: "彩虹小屋、餵袋鼠與神仙企鵝歸巢",
+                subtitle: "彩虹海灘打卡、餵食牆鼠，夜觀萌翻天的神仙小企鵝",
+                icon: "heart",
+                driveTime: "約 3 小時 (墨爾本 ➔ 彩虹小屋 ➔ 瑪魯 ➔ 菲利普島)",
+                highlights: ["Brighton Bathing Boxes 彩虹小屋", "Maru Animal Park 餵袋鼠", "Phillip Island 企鵝歸巢 (Penguin Parade)"],
+                timeline: [
+                    { time: "09:00", activity: "🚗 前往布萊頓海灘 (Brighton Beach)", desc: "車程約 30 分鐘，前往墨爾本最具代表性的彩色木屋區。" },
+                    { time: "09:30", activity: "🌈 彩虹小屋拍照散步", desc: "在海灘旁與整齊排列的繽紛 Bathing Boxes 合照留念。" },
+                    { time: "11:00", activity: "🚗 前往瑪魯考拉野生動物園 (Maru Koala & Animal Park)", desc: "車程約 1.2 小時，直達菲利普島途中的野生動物天堂。" },
+                    { time: "12:30", activity: "🦘 親手餵食袋鼠與無尾熊相見歡", desc: "進入園區購買飼料，讓小朋友親手餵食溫和的小袋鼠 (Wallaby)，並與無尾熊合照。" },
+                    { time: "15:30", activity: "🌊 菲利普島 Nobbies Centre 景觀步道", desc: "驅車進入菲利普島最西端，走在木棧道上欣賞海浪拍打與海蝕洞壯景。" },
+                    { time: "17:30", activity: "🐧 菲利普島企鵝歸巢 (Penguin Parade)", desc: "在看台等待！太陽西下時，成百上千隻世界上最小的神仙小企鵝搖搖擺擺登陸回巢。" },
+                    { time: "19:30", activity: "🍽️ 晚餐：科斯小鎮 (Cowes) 海鮮大餐", desc: "在 Cowes 小鎮享用炸魚薯條或義大利麵料理。" },
+                    { time: "21:00", activity: "🚗 驅車返回墨爾本市區飯店", desc: "夜間行車請注意公路旁突發野生動物，安全返航。" }
+                ],
+                tips: "🐧 **觀看企鵝注意事項**：企鵝歸巢區全面禁止拍照與攝影（避免強光驚嚇企鵝眼睛），海邊風大極冷，請穿最強保暖衣物！"
+            },
+            {
+                day: 5,
+                date: "2027/07/01 (四)",
+                title: "墨爾本人文藝術與海岸散策",
+                subtitle: "塗鴉巷弄、世界級圖書館、歷史建築與聖柯達海灘",
+                icon: "camera",
+                driveTime: "市區輕軌 / 短程駕車 (約 20 分鐘)",
+                highlights: ["Hosier Lane 塗鴉街", "維多利亞州立圖書館 (State Library)", "皇家展覽館", "St Kilda 海灘"],
+                timeline: [
+                    { time: "09:30", activity: "🎨 Hosier Lane 街頭塗鴉巷", desc: "探索墨爾本最出名的巷弄藝術，欣賞世界級街頭藝術家隨時更新的塗鴉牆面。" },
+                    { time: "10:45", activity: "📚 維多利亞州立圖書館 (State Library Victoria)", desc: "造訪澳洲最古老圖書館，登高俯瞰令人震撼的八角形圓頂閱覽室 (La Trobe Reading Room)。" },
+                    { time: "12:30", activity: "☕ 墨爾本精品咖啡早午餐", desc: "體驗墨爾本咖啡文化（如 Higher Ground 或 Brother Baba Budan），享用 Flat White 與童趣餐點。" },
+                    { time: "14:00", activity: "🏛️ 皇家展覽館 (Royal Exhibition Building) & Carlton 花園", desc: "漫步世界文化遺產建築旁廣闊的 Carlton 花園，小朋友可在綠地上奔跑放電。" },
+                    { time: "16:00", activity: "🏖️ 聖柯達海灘 (St Kilda Beach) 與 St Kilda Pier", desc: "驅車前往 St Kilda 海灘，走在棧橋上遠眺墨爾本市區天際線夕陽。" },
+                    { time: "18:30", activity: "🥩 晚餐：墨爾本知名牛排餐廳", desc: "享用頂級澳洲和牛與多汁牛排，歡慶本次墨爾本之旅倒數盛宴。" }
+                ],
+                tips: "🚃 **免費輕軌**：墨爾本 CBD 內有 Free Tram Zone (免費輕軌區)，市區景點間移動可善用免費路面電車！"
+            },
+            {
+                day: 6,
+                date: "2027/07/02 (五)",
+                title: "採買紀念品與機場溫馨返航",
+                subtitle: "收拾滿滿回憶與戰利品，順利還車搭機返家",
+                icon: "shopping-bag",
+                driveTime: "約 30-40 分鐘 (市區 ➔ 機場還車)",
+                highlights: ["維多利亞集市 / DFO 採買", "機場加油還車", "免稅店購物", "溫馨返航"],
+                timeline: [
+                    { time: "09:30", activity: "🛍️ Queen Victoria Market 或 DFO 採買", desc: "採買最後紀念品：澳洲木瓜膏、無患子洗髮精、羊乳片、蜂膠與高質感羊毛製品。" },
+                    { time: "12:00", activity: "🍱 輕食午餐與飯店退房", desc: "回飯店收拾所有行李，確認所有護照與隨身物品未遺漏。" },
+                    { time: "13:30", activity: "⛽ 駕車前往機場附近加油站加滿油", desc: "滿油還車（請保留加油收據以備檢查）。" },
+                    { time: "14:15", activity: "🚗 墨爾本機場 (MEL) 辦理還車", desc: "將車輛開回 Car Rental Return 區，工作人員快速驗車完成還車。" },
+                    { time: "15:00", activity: "✈️ 托運行李、過安檢與免稅店購物", desc: "輕鬆逛免稅店，購買墨爾本精品咖啡豆與甜點。" },
+                    { time: "17:30", activity: "🛫 搭乘返航航班返回溫馨的家", desc: "帶著滿載的冬日親子美好回憶，順利起飛返家！" }
+                ],
+                tips: "⛽ **還車提醒**：澳洲租車通常實施「滿油出還」，請於距離機場 5-10 公里內的加油站加滿，避免被收取高額加算油費。"
+            }
+        ];
+
+        // Default packing items
+        const PACKING_ITEMS_DEFAULT = [
+            { id: 1, text: "護照（有效期限 6 個月以上）", category: "documents", checked: true },
+            { id: 2, text: "澳洲 ETA 電子簽證 (電子檔 & 列印備份)", category: "documents", checked: true },
+            { id: 3, text: "台灣駕照正本 + 國際駕照 (IDP)", category: "documents", checked: true },
+            { id: 4, text: "信用卡 (具備感應支付) & 少許澳幣現金", category: "documents", checked: false },
+            { id: 5, text: "租車預約單 & 景點門票 (普芬比利/企鵝歸巢)", category: "documents", checked: true },
+            
+            { id: 6, text: "保暖發熱衣 & 輕量羽絨外套 (洋蔥式穿法)", category: "clothing", checked: false },
+            { id: 7, text: "湖山滑雪用：防水防風外套、防水手套、毛帽", category: "clothing", checked: false },
+            { id: 8, text: "防滑防水短靴 / 舒適健走鞋", category: "clothing", checked: false },
+            { id: 9, text: "兒童保暖圍巾、耳罩與多備替換長褲", category: "clothing", checked: false },
+            
+            { id: 10, text: "兒童安全座椅 / 增高墊 (租車已預訂)", category: "kids", checked: true },
+            { id: 11, text: "可折疊輕便推車與防風防雨罩", category: "kids", checked: false },
+            { id: 12, text: "保溫水壺與車上兒童備用零食", category: "kids", checked: false },
+            { id: 13, text: "兒童常備藥品 (退燒、止咳、暈車藥、創可貼)", category: "kids", checked: false },
+            
+            { id: 14, text: "澳洲萬用插頭轉接頭 (八字三孔型)", category: "electronics", checked: false },
+            { id: 15, text: "澳洲 4G/5G SIM卡 / eSIM 卡", category: "electronics", checked: false },
+            { id: 16, text: "行動電源 & 車載手機架 (自駕導航極重要)", category: "electronics", checked: false }
+        ];
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('itinerary');
+            const [selectedDay, setSelectedDay] = useState(1);
+            const [packingItems, setPackingItems] = useState(() => {
+                const saved = localStorage.getItem('melbourne_packing');
+                return saved ? JSON.parse(saved) : PACKING_ITEMS_DEFAULT;
+            });
+            const [notes, setNotes] = useState(() => {
+                return localStorage.getItem('melbourne_notes') || "墨爾本自駕筆記：\n1. 每天早上開車前檢查 Google Maps 路況。\n2. 普芬比利火車 Belgrave 站停車場記得早點到。\n3. CityLink 收費道路確認租車公司 e-TAG 已啟用。";
+            });
+            const [newNote, setNewNote] = useState('');
+            const [expenseList, setExpenseList] = useState(() => {
+                const saved = localStorage.getItem('melbourne_expenses');
+                return saved ? JSON.parse(saved) : [
+                    { id: 1, item: "企鵝歸巢門票 (4人)", amount: 180, currency: "AUD" },
+                    { id: 2, item: "普芬比利蒸汽火車", amount: 160, currency: "AUD" },
+                    { id: 3, item: "租車 6 天與安全座椅", amount: 520, currency: "AUD" }
+                ];
+            });
+            const [expItem, setExpItem] = useState('');
+            const [expAmount, setExpAmount] = useState('');
+
+            useEffect(() => {
+                localStorage.setItem('melbourne_packing', JSON.stringify(packingItems));
+            }, [packingItems]);
+
+            useEffect(() => {
+                localStorage.setItem('melbourne_notes', notes);
+            }, [notes]);
+
+            useEffect(() => {
+                localStorage.setItem('melbourne_expenses', JSON.stringify(expenseList));
+            }, [expenseList]);
+
+            useEffect(() => {
+                lucide.createIcons();
+            });
+
+            const togglePackItem = (id) => {
+                setPackingItems(packingItems.map(item => item.id === id ? { ...item, checked: !item.checked } : item));
+            };
+
+            const addExpense = (e) => {
+                e.preventDefault();
+                if (!expItem || !expAmount) return;
+                const newItem = {
+                    id: Date.now(),
+                    item: expItem,
+                    amount: parseFloat(expAmount),
+                    currency: "AUD"
+                };
+                setExpenseList([...expenseList, newItem]);
+                setExpItem('');
+                setExpAmount('');
+            };
+
+            const deleteExpense = (id) => {
+                setExpenseList(expenseList.filter(item => item.id !== id));
+            };
+
+            const totalExpenses = expenseList.reduce((sum, i) => sum + i.amount, 0);
+            const packedCount = packingItems.filter(i => i.checked).length;
+            const progressPercent = Math.round((packedCount / packingItems.length) * 100);
+
+            const currentDayData = ITINERARY_DATA.find(d => d.day === selectedDay);
+
+            return (
+                <div className="min-h-screen flex flex-col justify-between">
+                    {/* Top Hero Section */}
+                    <header className="bg-gradient-to-r from-emerald-900 via-teal-900 to-amber-950 text-white pt-8 pb-12 px-4 sm:px-6 relative shadow-lg">
+                        <div className="max-w-5xl mx-auto">
+                            <div className="flex flex-wrap items-center justify-between gap-4">
+                                <div>
+                                    <span className="bg-amber-500/20 text-amber-300 border border-amber-400/40 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider inline-flex items-center gap-1">
+                                        🇦🇺 親子自駕手冊
+                                    </span>
+                                    <h1 className="text-2xl sm:text-4xl font-extrabold mt-2 tracking-tight text-amber-50">
+                                        2027 墨爾本 6 日親子自駕探索之旅
+                                    </h1>
+                                    <p className="text-emerald-100 text-sm sm:text-base mt-1 flex flex-wrap items-center gap-3">
+                                        <span>📅 2027/06/27 (日) – 2027/07/02 (五)</span>
+                                        <span>•</span>
+                                        <span>👨‍👩‍👧‍👦 4人同行 (2大2小)</span>
+                                        <span>•</span>
+                                        <span>❄️ 墨爾本冬日風情</span>
+                                    </p>
+                                </div>
+                                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-center min-w-[160px]">
+                                    <div className="text-xs text-amber-200">準備進度</div>
+                                    <div className="text-2xl font-bold text-white mt-0.5">{progressPercent}%</div>
+                                    <div className="w-full bg-white/20 h-2 rounded-full mt-2 overflow-hidden">
+                                        <div 
+                                            className="bg-amber-400 h-full transition-all duration-300"
+                                            style={{ width: `${progressPercent}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Navigation Bar */}
+                    <nav className="bg-white border-b border-stone-200 sticky top-0 z-30 shadow-sm">
+                        <div className="max-w-5xl mx-auto px-4 flex space-x-1 sm:space-x-8 overflow-x-auto custom-scrollbar">
+                            <button
+                                onClick={() => setActiveTab('itinerary')}
+                                className={`py-4 px-3 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${activeTab === 'itinerary' ? 'tab-active' : 'text-stone-600 hover:text-stone-900'}`}
+                            >
+                                <i data-lucide="map"></i> 每日行程 Itinerary
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('drive')}
+                                className={`py-4 px-3 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${activeTab === 'drive' ? 'tab-active' : 'text-stone-600 hover:text-stone-900'}`}
+                            >
+                                <i data-lucide="car"></i> 自駕與 Traffic 指南
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('checklist')}
+                                className={`py-4 px-3 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${activeTab === 'checklist' ? 'tab-active' : 'text-stone-600 hover:text-stone-900'}`}
+                            >
+                                <i data-lucide="check-square"></i> 準備清單 Checklist
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('weather')}
+                                className={`py-4 px-3 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${activeTab === 'weather' ? 'tab-active' : 'text-stone-600 hover:text-stone-900'}`}
+                            >
+                                <i data-lucide="cloud-snow"></i> 天氣與穿搭
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('scratchpad')}
+                                className={`py-4 px-3 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${activeTab === 'scratchpad' ? 'tab-active' : 'text-stone-600 hover:text-stone-900'}`}
+                            >
+                                <i data-lucide="edit-3"></i> 隨手記與記帳
+                            </button>
+                        </div>
+                    </nav>
+
+                    {/* Main Content Area */}
+                    <main className="max-w-5xl mx-auto px-4 py-8 flex-1 w-full">
+
+                        {/* TAB 1: ITINERARY */}
+                        {activeTab === 'itinerary' && (
+                            <div className="space-y-6">
+                                {/* Day Selector Tabs */}
+                                <div className="grid grid-cols-6 gap-2 bg-stone-200/60 p-1.5 rounded-2xl">
+                                    {[1, 2, 3, 4, 5, 6].map(day => (
+                                        <button
+                                            key={day}
+                                            onClick={() => setSelectedDay(day)}
+                                            className={`py-2.5 rounded-xl text-center transition-all ${selectedDay === day ? 'bg-amber-600 text-white font-bold shadow-md' : 'text-stone-700 hover:bg-stone-300/50'}`}
+                                        >
+                                            <div className="text-xs opacity-90">DAY</div>
+                                            <div className="text-base sm:text-lg leading-tight">{day}</div>
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Current Selected Day Header */}
+                                <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200/80">
+                                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 pb-4">
+                                        <div>
+                                            <span className="text-xs font-bold text-amber-700 bg-amber-100 px-3 py-1 rounded-full">
+                                                {currentDayData.date}
+                                            </span>
+                                            <h2 className="text-xl sm:text-2xl font-bold text-stone-800 mt-2">
+                                                Day {currentDayData.day}: {currentDayData.title}
+                                            </h2>
+                                            <p className="text-stone-500 text-sm mt-0.5">{currentDayData.subtitle}</p>
+                                        </div>
+                                        <div className="text-xs text-stone-600 bg-stone-100 px-3 py-2 rounded-xl flex items-center gap-1.5 border border-stone-200">
+                                            <i data-lucide="navigation" className="w-4 h-4 text-emerald-700"></i>
+                                            <span>{currentDayData.driveTime}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Key Highlights Badges */}
+                                    <div className="mt-4 flex flex-wrap gap-2">
+                                        {currentDayData.highlights.map((hl, idx) => (
+                                            <span key={idx} className="bg-emerald-50 text-emerald-800 text-xs px-3 py-1.5 rounded-lg border border-emerald-200/60 font-medium flex items-center gap-1">
+                                                ✨ {hl}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    {/* Timeline Cards */}
+                                    <div className="mt-8 space-y-4">
+                                        {currentDayData.timeline.map((item, idx) => (
+                                            <div key={idx} className="flex items-start gap-4 p-4 rounded-2xl bg-stone-50 hover:bg-amber-50/40 border border-stone-200/60 transition-colors">
+                                                <div className="min-w-[65px] bg-amber-100 text-amber-900 font-bold text-xs py-1.5 px-2.5 rounded-lg text-center mt-0.5">
+                                                    {item.time}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="font-bold text-stone-800 text-base">{item.activity}</h3>
+                                                    <p className="text-stone-600 text-sm mt-1 leading-relaxed">{item.desc}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Family Tip Box */}
+                                    <div className="mt-6 bg-amber-50/80 border border-amber-200 rounded-2xl p-4 text-sm text-amber-900 flex items-start gap-3">
+                                        <div className="text-lg">💡</div>
+                                        <div className="leading-relaxed" dangerouslySetInnerHTML={{ __html: currentDayData.tips }}></div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 2: SELF-DRIVE & TRAFFIC GUIDE */}
+                        {activeTab === 'drive' && (
+                            <div className="space-y-6">
+                                <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200">
+                                    <h2 className="text-xl font-bold text-stone-800 flex items-center gap-2">
+                                        <i data-lucide="shield-alert" className="text-amber-600"></i> 澳洲墨爾本自駕核心須知
+                                    </h2>
+                                    <p className="text-stone-600 text-sm mt-1">澳洲為右駕（靠左行駛），規則嚴格，請務必詳閱以下提醒。</p>
+
+                                    {/* Hook Turn Interactive Visual */}
+                                    <div className="mt-6 border border-emerald-200 bg-emerald-50/40 rounded-2xl p-5">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="font-bold text-emerald-900 text-base flex items-center gap-2">
+                                                🪝 墨爾本 CBD 特有「鉤狀轉彎 (Hook Turn)」解說
+                                            </h3>
+                                            <span className="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-md font-bold">市區右轉必讀</span>
+                                        </div>
+                                        <p className="text-xs text-emerald-800 mt-2 leading-relaxed">
+                                            為避免右轉車輛阻擋路面電車 (Tram)，墨爾本市區設有 Hook Turn 標誌的路口，右轉必須從**最左側車道**進行！
+                                        </p>
+
+                                        {/* Visual Step Cards */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-4">
+                                            <div className="bg-white p-3 rounded-xl border border-emerald-200 shadow-sm text-xs">
+                                                <div className="font-bold text-emerald-800 mb-1">Step 1</div>
+                                                <div className="text-stone-700">靠最右邊行駛？**不！** 切換至**最左側車道**打右轉燈。</div>
+                                            </div>
+                                            <div className="bg-white p-3 rounded-xl border border-emerald-200 shadow-sm text-xs">
+                                                <div className="font-bold text-emerald-800 mb-1">Step 2</div>
+                                                <div className="text-stone-700">直行燈亮時，開入路口中央，偏左停在橫向車道前。</div>
+                                            </div>
+                                            <div className="bg-white p-3 rounded-xl border border-emerald-200 shadow-sm text-xs">
+                                                <div className="font-bold text-emerald-800 mb-1">Step 3</div>
+                                                <div className="text-stone-700">在路口中央停住，等待右側橫向道路的綠燈亮起。</div>
+                                            </div>
+                                            <div className="bg-white p-3 rounded-xl border border-emerald-200 shadow-sm text-xs">
+                                                <div className="font-bold text-emerald-800 mb-1">Step 4</div>
+                                                <div className="text-stone-700">橫向綠燈亮起後，順暢完成右轉駛入新道路。</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Child Safety Seats & Key Rules Grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                                        <div className="bg-stone-50 p-5 rounded-2xl border border-stone-200">
+                                            <h4 className="font-bold text-stone-800 text-sm flex items-center gap-2">
+                                                👶 兒童安全座椅規定 (Victorian Law)
+                                            </h4>
+                                            <ul className="text-xs text-stone-600 mt-3 space-y-2 leading-relaxed">
+                                                <li>• <strong>0 – 6 個月</strong>：必須使用後向式兒童安全座椅 (Rearward-facing)。</li>
+                                                <li>• <strong>6 個月 – 4 歲</strong>：使用後向式或前向式安全座椅 (Forward-facing)。</li>
+                                                <li>• <strong>4 歲 – 7 歲</strong>：必須使用安全座椅或兒童增高墊 (Booster seat)。</li>
+                                                <li>• ⚠️ <strong>7 歲以下兒童一律禁止坐在前排副駕駛座！</strong></li>
+                                            </ul>
+                                        </div>
+
+                                        <div className="bg-stone-50 p-5 rounded-2xl border border-stone-200">
+                                            <h4 className="font-bold text-stone-800 text-sm flex items-center gap-2">
+                                                🛣️ 收費道路 (CityLink & EastLink)
+                                            </h4>
+                                            <ul className="text-xs text-stone-600 mt-3 space-y-2 leading-relaxed">
+                                                <li>• 墨爾本電子收費道路無實體收費站，全靠攝影感應。</li>
+                                                <li>• <strong>租車處理</strong>：一般租車公司已內建 e-TAG，過路費將從信用卡自動扣繳。</li>
+                                                <li>• <strong>自行繳費</strong>：若無 e-TAG，需在通行後 48 小時內上網 (CityLink.com.au) 購買通行證 (Day Pass)。</li>
+                                            </ul>
+                                        </div>
+
+                                        <div className="bg-stone-50 p-5 rounded-2xl border border-stone-200">
+                                            <h4 className="font-bold text-stone-800 text-sm flex items-center gap-2">
+                                                🛑 限速與行人路權
+                                            </h4>
+                                            <ul className="text-xs text-stone-600 mt-3 space-y-2 leading-relaxed">
+                                                <li>• 澳洲測速相機極為嚴格，超過 1-2 km/h 即可能遭開罰。</li>
+                                                <li>• 市區無標示預設限速 50 km/h，學校區域 (School Zone) 40 km/h。</li>
+                                                <li>• 行人優先：行經斑馬線或無燈號路口，必須完全煞停禮讓行人。</li>
+                                            </ul>
+                                        </div>
+
+                                        <div className="bg-stone-50 p-5 rounded-2xl border border-stone-200">
+                                            <h4 className="font-bold text-stone-800 text-sm flex items-center gap-2">
+                                                🅿️ 墨爾本停車標示看懂
+                                            </h4>
+                                            <ul className="text-xs text-stone-600 mt-3 space-y-2 leading-relaxed">
+                                                <li>• <strong>1P / 2P</strong>：代表免費停車 1 小時或 2 小時。</li>
+                                                <li>• <strong>Meter</strong>：代表此時段需付費（可使用 EasyPark App 或現場投幣/刷卡）。</li>
+                                                <li>• ⚠️ 避開 <strong>Clearway</strong> 與 <strong>No Stopping</strong> 時段，違規會被立即拖吊。</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 3: PACKING CHECKLIST */}
+                        {activeTab === 'checklist' && (
+                            <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 space-y-6">
+                                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-stone-100 pb-4">
+                                    <div>
+                                        <h2 className="text-xl font-bold text-stone-800">🎒 互動式出發準備清單</h2>
+                                        <p className="text-stone-500 text-sm mt-0.5">點擊標記已準備好的物品，進度會自動儲存於此裝置</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-sm font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+                                            已完成 {packedCount} / {packingItems.length} 項 ({progressPercent}%)
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {['documents', 'clothing', 'kids', 'electronics'].map(cat => {
+                                        const categoryTitles = {
+                                            documents: "📄 重要證件與文件",
+                                            clothing: "🧥 雪地與保暖穿搭裝備",
+                                            kids: "🧸 兒童與家庭隨身用品",
+                                            electronics: "🔌 電器、SIM卡與自駕導航"
+                                        };
+                                        const items = packingItems.filter(i => i.category === cat);
+                                        return (
+                                            <div key={cat} className="bg-stone-50 p-4 rounded-2xl border border-stone-200">
+                                                <h3 className="font-bold text-stone-800 text-sm mb-3">{categoryTitles[cat]}</h3>
+                                                <div className="space-y-2">
+                                                    {items.map(item => (
+                                                        <label 
+                                                            key={item.id}
+                                                            onClick={() => togglePackItem(item.id)}
+                                                            className={`flex items-start gap-3 p-2.5 rounded-xl border transition-all cursor-pointer ${item.checked ? 'bg-emerald-50/80 border-emerald-200 text-stone-400 line-through' : 'bg-white border-stone-200 text-stone-800 hover:border-amber-400'}`}
+                                                        >
+                                                            <input 
+                                                                type="checkbox"
+                                                                checked={item.checked}
+                                                                onChange={() => {}} 
+                                                                className="mt-0.5 rounded text-amber-600 focus:ring-amber-500 w-4 h-4"
+                                                            />
+                                                            <span className="text-xs font-medium leading-relaxed">{item.text}</span>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 4: WEATHER & DRESSING GUIDE */}
+                        {activeTab === 'weather' && (
+                            <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 space-y-6">
+                                <h2 className="text-xl font-bold text-stone-800 flex items-center gap-2">
+                                    <i data-lucide="cloud-snow" className="text-blue-600"></i> 墨爾本 6/7 月冬日天氣與洋蔥式穿搭指南
+                                </h2>
+                                
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div className="bg-blue-50 p-4 rounded-2xl border border-blue-200 text-center">
+                                        <div className="text-xs font-bold text-blue-600 uppercase">市區平均氣溫</div>
+                                        <div className="text-2xl font-extrabold text-blue-900 mt-1">7°C – 14°C</div>
+                                        <div className="text-xs text-blue-700 mt-1">早晚偏冷，晴朗多雲</div>
+                                    </div>
+                                    <div className="bg-indigo-50 p-4 rounded-2xl border border-indigo-200 text-center">
+                                        <div className="text-xs font-bold text-indigo-600 uppercase">湖山雪場氣溫</div>
+                                        <div className="text-2xl font-extrabold text-indigo-900 mt-1">0°C – 5°C</div>
+                                        <div className="text-xs text-indigo-700 mt-1">有積雪，體感極冷</div>
+                                    </div>
+                                    <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200 text-center">
+                                        <div className="text-xs font-bold text-amber-600 uppercase">菲利普島海岸</div>
+                                        <div className="text-2xl font-extrabold text-amber-900 mt-1">6°C – 11°C</div>
+                                        <div className="text-xs text-amber-700 mt-1">夜間海風強勁</div>
+                                    </div>
+                                </div>
+
+                                <div className="border border-stone-200 rounded-2xl p-5 bg-stone-50 space-y-4">
+                                    <h3 className="font-bold text-stone-800 text-base">🧅 建議「洋蔥式三層穿搭法」 (Layering System)</h3>
+                                    
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div className="bg-white p-3.5 rounded-xl border border-stone-200">
+                                            <div className="font-bold text-amber-700 text-xs">內層 (Base Layer)</div>
+                                            <div className="text-xs text-stone-700 mt-1">吸濕排汗發熱衣 / 羊毛內衣。保持身體乾燥溫暖。</div>
+                                        </div>
+                                        <div className="bg-white p-3.5 rounded-xl border border-stone-200">
+                                            <div className="font-bold text-amber-700 text-xs">中層 (Mid Layer)</div>
+                                            <div className="text-xs text-stone-700 mt-1">刷毛衣、羊毛衫或薄羽絨馬甲，鎖住身體熱量。</div>
+                                        </div>
+                                        <div className="bg-white p-3.5 rounded-xl border border-stone-200">
+                                            <div className="font-bold text-amber-700 text-xs">外層 (Outer Layer)</div>
+                                            <div className="text-xs text-stone-700 mt-1">防風防水連帽羽絨大衣 / 衝鋒衣。抵擋強風與驟雨。</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white p-4 rounded-xl border border-amber-200 text-xs text-stone-700 leading-relaxed">
+                                        <strong>⚠️ 墨爾本一日四季特性：</strong> 墨爾本以一天之內經歷四季變化出名！早上可能晴空萬里，下午突然下雨降溫。隨身包內務必為小朋友攜帶防風帽、手套與摺疊傘。
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 5: SCRATCHPAD & EXPENSE TRACKER */}
+                        {activeTab === 'scratchpad' && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Trip Notes */}
+                                <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 space-y-4">
+                                    <h2 className="text-lg font-bold text-stone-800 flex items-center gap-2">
+                                        <i data-lucide="notebook" className="text-amber-600"></i> 行程隨手筆記 / 備忘錄
+                                    </h2>
+                                    <p className="text-xs text-stone-500">此筆記會自動儲存於您的瀏覽器中。</p>
+                                    <textarea
+                                        value={notes}
+                                        onChange={(e) => setNotes(e.target.value)}
+                                        rows={10}
+                                        className="w-full p-3.5 rounded-xl border border-stone-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-xs text-stone-800 leading-relaxed custom-scrollbar"
+                                        placeholder="輸入臨時筆記、餐廳清單、停車號碼等..."
+                                    ></textarea>
+                                </div>
+
+                                {/* Expense Scratchpad */}
+                                <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <h2 className="text-lg font-bold text-stone-800 flex items-center gap-2">
+                                            <i data-lucide="calculator" className="text-emerald-600"></i> 預算與消費速記 (AUD)
+                                        </h2>
+                                        <span className="text-sm font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                                            總計: ${totalExpenses.toFixed(2)} AUD
+                                        </span>
+                                    </div>
+
+                                    {/* Add Expense Form */}
+                                    <form onSubmit={addExpense} className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            placeholder="項目名稱 (如: 門票)"
+                                            value={expItem}
+                                            onChange={(e) => setExpItem(e.target.value)}
+                                            className="flex-1 p-2.5 rounded-xl border border-stone-300 text-xs focus:ring-2 focus:ring-emerald-500"
+                                        />
+                                        <input
+                                            type="number"
+                                            placeholder="金額"
+                                            value={expAmount}
+                                            onChange={(e) => setExpAmount(e.target.value)}
+                                            className="w-24 p-2.5 rounded-xl border border-stone-300 text-xs focus:ring-2 focus:ring-emerald-500"
+                                        />
+                                        <button 
+                                            type="submit"
+                                            className="bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-emerald-800 transition-colors"
+                                        >
+                                            新增
+                                        </button>
+                                    </form>
+
+                                    {/* Expense List */}
+                                    <div className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
+                                        {expenseList.map(item => (
+                                            <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs">
+                                                <span className="font-medium text-stone-800">{item.item}</span>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="font-bold text-emerald-800">${item.amount.toFixed(2)} AUD</span>
+                                                    <button 
+                                                        onClick={() => deleteExpense(item.id)}
+                                                        className="text-stone-400 hover:text-red-500 transition-colors"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="bg-stone-900 text-stone-400 text-xs text-center py-6 px-4 mt-8 border-t border-stone-800">
+                        <div className="max-w-5xl mx-auto space-y-2">
+                            <p>🇦🇺 祝 2027 墨爾本 6 日親子自駕之旅平安順心、收穫滿滿美好回憶！</p>
+                            <p className="text-stone-600">Melbourne Self-Drive Travel Handbook • 2027/06/27 – 2027/07/02</p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
