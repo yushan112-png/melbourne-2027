@@ -68,7 +68,7 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
 
-        // 9-Day Itinerary Data
+        // 9-Day Itinerary Data with Google Maps Links
         const ITINERARY_DATA = [
             {
                 day: 1,
@@ -81,9 +81,22 @@
                 meals: { b: "自理", l: "自理", d: "機上精緻餐點" },
                 highlights: ["華航 CI157 直飛", "深夜 23:30 起飛", "舒適機上過夜"],
                 timeline: [
-                    { time: "20:30", activity: "✈️ 桃園國際機場 (TPE) 報到", desc: "前往華航櫃檯辦理全家託運行李手續，確認護照與澳洲 ETA 電子簽證。" },
-                    { time: "21:30", activity: "🛂 安檢與快速通關", desc: "通關後可至候機室讓兩位小朋友稍微休息、裝溫開水。" },
-                    { time: "23:30", activity: "🛫 搭乘華航 CI157 班機起飛", desc: "班機準時起飛直飛墨爾本 (MEL)，在飛機上好好休息養精蓄銳。" }
+                    {
+                        time: "20:30",
+                        activity: "✈️ 桃園國際機場 (TPE) 報到",
+                        desc: "前往華航櫃檯辦理全家託運行李手續，確認護照與澳洲 ETA 電子簽證。",
+                        maps: [{ label: "桃園機場", url: "https://www.google.com/maps/search/?api=1&query=Taoyuan+International+Airport" }]
+                    },
+                    {
+                        time: "21:30",
+                        activity: "🛂 安檢與快速通關",
+                        desc: "通關後可至候機室讓兩位小朋友稍微休息、裝溫開水。"
+                    },
+                    {
+                        time: "23:30",
+                        activity: "🛫 搭乘華航 CI157 班機起飛",
+                        desc: "班機準時起飛直飛墨爾本 (MEL)，在飛機上好好休息養精蓄銳。"
+                    }
                 ],
                 tips: "💡 飛行提醒：夜航飛行時間約 9 小時，請為孩子準備頸枕、眼罩與保暖外套，確保充足睡眠以應付明日行程。"
             },
@@ -98,12 +111,42 @@
                 meals: { b: "機上早餐", l: "Beechworth Bakery 傳統派", d: "Monroe's Burgers 美式漢堡" },
                 highlights: ["MEL T2 取車", "Beechworth Bakery 現烤牛肉派", "Healesville 希斯維爾野生動物園", "Lavender Farm 農莊大草坪"],
                 timeline: [
-                    { time: "10:40", activity: "🛬 抵達墨爾本國際機場 (MEL T2)", desc: "順利過海關領取行李，至 Terminal 2 租車櫃檯辦理 SUV 取車手續（確認安裝 2 張兒童座椅）。" },
-                    { time: "12:00", activity: "🚗 右駕啟程開往 Healesville 小鎮", desc: "沿途適應澳洲靠左行駛與道路速限，車程約 1 小時。" },
-                    { time: "13:00", activity: "🥧 午餐：Beechworth Bakery Healesville", desc: "品嚐獲獎無數的道地現烤澳洲牛肉派、香濃蔬菜熱湯與現煮咖啡。" },
-                    { time: "14:00", activity: "🦘 希斯維爾野生動物保護區 (Healesville Sanctuary)", desc: "探訪澳洲原生動物棲息地，近距離觀察無尾熊、袋鼠與罕見的鴨嘴獸 (Platypus)。" },
-                    { time: "15:30", activity: "🏡 Check-in 入住 Lavender Farm (拉萬達農莊)", desc: "開車 10 分鐘抵達農莊入住庭園小木屋，讓兩位小朋友在獨立大草坪奔跑、看農場風景並適應時差。" },
-                    { time: "18:00", activity: "🍔 晚餐：Monroe's Burgers & Beers", desc: "位於 Healesville 主街上的優質美式漢堡店，備有小朋友最愛的兒童漢堡套餐。" }
+                    {
+                        time: "10:40",
+                        activity: "🛬 抵達墨爾本國際機場 (MEL T2)",
+                        desc: "順利過海關領取行李，至 Terminal 2 租車櫃檯辦理 SUV 取車手續（確認安裝 2 張兒童座椅）。",
+                        maps: [{ label: "MEL 機場 T2", url: "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport+Terminal+2" }]
+                    },
+                    {
+                        time: "12:00",
+                        activity: "🚗 右駕啟程開往 Healesville 小鎮",
+                        desc: "沿途適應澳洲靠左行駛與道路速限，車程約 1 小時。",
+                        maps: [{ label: "Healesville 小鎮", url: "https://www.google.com/maps/search/?api=1&query=Healesville+VIC" }]
+                    },
+                    {
+                        time: "13:00",
+                        activity: "🥧 午餐：Beechworth Bakery Healesville",
+                        desc: "品嚐獲獎無數的道地現烤澳洲牛肉派、香濃蔬菜熱湯與現煮咖啡。",
+                        maps: [{ label: "Beechworth Bakery", url: "https://www.google.com/maps/search/?api=1&query=Beechworth+Bakery+Healesville+VIC" }]
+                    },
+                    {
+                        time: "14:00",
+                        activity: "🦘 希斯維爾野生動物保護區 (Healesville Sanctuary)",
+                        desc: "探訪澳洲原生動物棲息地，近距離觀察無尾熊、袋鼠與罕見的鴨嘴獸 (Platypus)。",
+                        maps: [{ label: "希斯維爾動物園", url: "https://www.google.com/maps/search/?api=1&query=Healesville+Sanctuary+VIC" }]
+                    },
+                    {
+                        time: "15:30",
+                        activity: "🏡 Check-in 入住 Lavender Farm (拉萬達農莊)",
+                        desc: "開車 10 分鐘抵達農莊入住庭園小木屋，讓兩位小朋友在獨立大草坪奔跑、看農場景色並適應時差。",
+                        maps: [{ label: "Lavender Farm", url: "https://www.google.com/maps/search/?api=1&query=Lavender+Farm+Healesville+VIC" }]
+                    },
+                    {
+                        time: "18:00",
+                        activity: "🍔 晚餐：Monroe's Burgers & Beers",
+                        desc: "位於 Healesville 主街上的優質美式漢堡店，備有小朋友最愛的兒童漢堡套餐。",
+                        maps: [{ label: "Monroe's Burgers", url: "https://www.google.com/maps/search/?api=1&query=Monroe%27s+Burgers+%26+Beers+Healesville+VIC" }]
+                    }
                 ],
                 tips: "🏡 農莊優點：前 3 晚入住 Lavender Farm 有手作農場早餐與獨立大草坪，距離 Lake Mountain 雪場僅 50 分鐘車程，免去來回拉車！"
             },
@@ -118,12 +161,40 @@
                 meals: { b: "手作農場早餐", l: "Marysville 咖啡館 / 雪場輕食", d: "Zoncello 柴燒窯烤披薩" },
                 highlights: ["週一避開週末雪場人潮", "Marysville 鎮上租用雪具", "Lake Mountain 滑雪道與 Toboggan 雪橇", "Zoncello 柴燒窯烤披薩"],
                 timeline: [
-                    { time: "08:30", activity: "🥣 農莊享用手作早餐後出發", desc: "出發前往 Marysville 山腳小鎮（車程約 35 分鐘）。" },
-                    { time: "09:15", activity: "🎿 Cross Country Ski Hire Marysville 租借裝備", desc: "順路試穿並租借 2 大 2 小防水雪靴、防水雪褲及雪橇 (Toboggan)，免去山頂排隊與受凍。" },
-                    { time: "10:15", activity: "❄️ 湖山滑雪度假村 (Lake Mountain Alpine Resort)", desc: "駛入雪場專屬停車場！體驗滑雪道樂趣、極速雪盆滑行，全家一起堆雪人打雪仗。" },
-                    { time: "12:30", activity: "☕ 咖啡館 / 雪場遊客中心享用輕食午餐", desc: "在山頂暖氣中心享用熱湯、三明治、薯條與熱可可補充體力。" },
-                    { time: "14:30", activity: "🚗 返還雪具並返回農莊", desc: "車程僅 50 分鐘，迅速回到 Lavender Farm 農莊沖熱水澡更衣，完全不怕孩子受涼受風寒。" },
-                    { time: "18:00", activity: "🍕 晚餐：Zoncello Yarra Valley 窯烤披薩", desc: "享用現點現做正宗柴燒窯烤披薩、義大利麵與兒童專屬菜單。" }
+                    {
+                        time: "08:30",
+                        activity: "🥣 農莊享用手作早餐後出發",
+                        desc: "出發前往 Marysville 山腳小鎮（車程約 35 分鐘）。",
+                        maps: [{ label: "Marysville 小鎮", url: "https://www.google.com/maps/search/?api=1&query=Marysville+VIC" }]
+                    },
+                    {
+                        time: "09:15",
+                        activity: "🎿 Cross Country Ski Hire Marysville 租借裝備",
+                        desc: "順路試穿並租借 2 大 2 小防水雪靴、防水雪褲及雪橇 (Toboggan)，免去山頂排隊與受凍。",
+                        maps: [{ label: "Marysville 雪具店", url: "https://www.google.com/maps/search/?api=1&query=Cross+Country+Ski+Hire+Marysville+VIC" }]
+                    },
+                    {
+                        time: "10:15",
+                        activity: "❄️ 湖山滑雪度假村 (Lake Mountain Alpine Resort)",
+                        desc: "駛入雪場專屬停車場！體驗滑雪道樂趣、極速雪盆滑行，全家一起堆雪人打雪仗。",
+                        maps: [{ label: "Lake Mountain 雪場", url: "https://www.google.com/maps/search/?api=1&query=Lake+Mountain+Alpine+Resort+VIC" }]
+                    },
+                    {
+                        time: "12:30",
+                        activity: "☕ 咖啡館 / 雪場遊客中心享用輕食午餐",
+                        desc: "在山頂暖氣中心享用熱湯、三明治、薯條與熱可可補充體力。"
+                    },
+                    {
+                        time: "14:30",
+                        activity: "🚗 返還雪具並返回農莊",
+                        desc: "車程僅 50 分鐘，迅速回到 Lavender Farm 農莊沖熱水澡更衣，完全不怕孩子受涼受風寒。"
+                    },
+                    {
+                        time: "18:00",
+                        activity: "🍕 晚餐：Zoncello Yarra Valley 窯烤披薩",
+                        desc: "享用現點現做正宗柴燒窯烤披薩、義大利麵與兒童專屬菜單。",
+                        maps: [{ label: "Zoncello 窯烤披薩", url: "https://www.google.com/maps/search/?api=1&query=Zoncello+Yarra+Valley+VIC" }]
+                    }
                 ],
                 tips: "❄️ 玩雪避坑指南：在山下 Marysville 租好雪靴雪褲雪橇省時又便宜！記得預先於官網預訂 Lake Mountain 車輛入園通行證 (Resort Entry Pass)。"
             },
@@ -138,12 +209,41 @@
                 meals: { b: "手作農場早餐", l: "Emerald Lake Park 湖畔午餐", d: "Healesville 鎮上溫馨餐館" },
                 highlights: ["普芬比利蒸汽火車 (Belgrave ➔ Lakeside)", "腳伸出車廂經典樂趣", "Emerald Lake Park 湖畔散步", "Rayner's Orchard 水果拖拉機與現採果汁"],
                 timeline: [
-                    { time: "09:00", activity: "🚗 出發前往 Belgrave 火車站", desc: "開車約 45 分鐘抵達普芬比利蒸汽火車起點站。" },
-                    { time: "10:00", activity: "🚂 普芬比利鐵路 (Puffing Billy Railway)", desc: "搭乘 Belgrave 至 Lakeside 段，體驗將雙腳伸出木造車廂外的百年復古經典樂趣！" },
-                    { time: "11:30", activity: "🥪 湖畔午餐：Emerald Lake Park Cafe", desc: "於 Lakeside 站 Emerald Lake Park 湖畔咖啡館享用悠閒午餐與咖啡。" },
-                    { time: "13:30", activity: "🚜 Rayner's Orchard (雷納採水果農場)", desc: "完全避開人潮與甜膩巧克力！全家搭乘開放式水果拖拉機穿梭果園，現採現試吃冬季柑橘與蘋果。" },
-                    { time: "15:30", activity: "🍹 DIY 現打純果汁與水果派體驗", desc: "小朋友可在農場體驗親手壓製新鮮果汁與品嚐手工現烤水果派。" },
-                    { time: "18:00", activity: "🍽️ 晚餐：Healesville 鎮上溫馨餐館", desc: "回到鎮上享用溫馨晚餐，返回農莊整理行李準備明日移防市區。" }
+                    {
+                        time: "09:00",
+                        activity: "🚗 出發前往 Belgrave 火車站",
+                        desc: "開車約 45 分鐘抵達普芬比利蒸汽火車起點站。",
+                        maps: [{ label: "Belgrave 火車站", url: "https://www.google.com/maps/search/?api=1&query=Puffing+Billy+Railway+Belgrave+VIC" }]
+                    },
+                    {
+                        time: "10:00",
+                        activity: "🚂 普芬比利鐵路 (Puffing Billy Railway)",
+                        desc: "搭乘 Belgrave 至 Lakeside 段，體驗將雙腳伸出木造車廂外的百年復古經典樂趣！",
+                        maps: [{ label: "普芬比利火車", url: "https://www.google.com/maps/search/?api=1&query=Puffing+Billy+Railway+Belgrave+VIC" }]
+                    },
+                    {
+                        time: "11:30",
+                        activity: "🥪 湖畔午餐：Emerald Lake Park Cafe",
+                        desc: "於 Lakeside 站 Emerald Lake Park 湖畔咖啡館享用悠閒午餐與咖啡。",
+                        maps: [{ label: "Emerald Lake Park", url: "https://www.google.com/maps/search/?api=1&query=Emerald+Lake+Park+Lakeside+VIC" }]
+                    },
+                    {
+                        time: "13:30",
+                        activity: "🚜 Rayner's Orchard (雷納採水果農場)",
+                        desc: "完全避開人潮與甜膩巧克力！全家搭乘開放式水果拖拉機穿梭果園，現採現試吃冬季柑橘與蘋果。",
+                        maps: [{ label: "Rayner's Orchard 果園", url: "https://www.google.com/maps/search/?api=1&query=Rayner%27s+Orchard+Woori+Yallock+VIC" }]
+                    },
+                    {
+                        time: "15:30",
+                        activity: "🍹 DIY 現打純果汁與水果派體驗",
+                        desc: "小朋友可在農場體驗親手壓製新鮮果汁與品嚐手工現烤水果派。"
+                    },
+                    {
+                        time: "18:00",
+                        activity: "🍽️ 晚餐：Healesville 鎮上溫馨餐館",
+                        desc: "回到鎮上享用溫馨晚餐，返回農莊整理行李準備明日移防市區。",
+                        maps: [{ label: "Healesville 小鎮", url: "https://www.google.com/maps/search/?api=1&query=Healesville+VIC" }]
+                    }
                 ],
                 tips: "🚂 搶票提示：普芬比利火車熱門時段位子有限，請務必於出發前 2-3 個月至官網預訂 Belgrave ➔ Lakeside 往返車票。"
             },
@@ -158,11 +258,35 @@
                 meals: { b: "手作農場早餐", l: "D.O.C 柴燒窯烤披薩", d: "市區特色餐廳" },
                 highlights: ["農莊退房移防市區", "飛馬公寓式酒店 Check-in", "D.O.C 柴燒披薩", "墨爾本博物館兒童藝廊", "卡爾頓城堡遊樂場"],
                 timeline: [
-                    { time: "10:00", activity: "🏡 Lavender Farm 退房驅車前往市區", desc: "順暢開車進入墨爾本市區，抵達 Pegasus Aparthotel (飛馬公寓式酒店) 辦理寄放行李。" },
-                    { time: "12:00", activity: "🍕 午餐：D.O.C Pizza & Mozzarella Bar - Carlton", desc: "品嚐墨爾本極受好評的正宗拿坡里柴燒窯烤披薩與莫札瑞拉起司。" },
-                    { time: "13:30", activity: "🏛️ 墨爾本博物館 (Melbourne Museum)", desc: "探索 Pauline Gandel 兒童藝廊與恐龍化石沙坑挖掘體驗（從飛馬酒店開車 4 分鐘或步行可達）。" },
-                    { time: "16:00", activity: "🏰 戶外放電：卡爾頓花園 (Carlton Gardens)", desc: "帶孩子在木造城堡巨型遊樂場自由跑跳放電，欣賞世界文化遺產建築景色。" },
-                    { time: "18:00", activity: "🍽️ 晚餐：市區特色餐廳", desc: "享用完美味晚餐後回飯店，開心地體驗飛馬酒店溫水游泳池。" }
+                    {
+                        time: "10:00",
+                        activity: "🏡 Lavender Farm 退房驅車前往市區",
+                        desc: "順暢開車進入墨爾本市區，抵達 Pegasus Aparthotel (飛馬公寓式酒店) 辦理寄放行李。",
+                        maps: [{ label: "飛馬公寓式酒店", url: "https://www.google.com/maps/search/?api=1&query=Pegasus+Aparthotel+Melbourne+VIC" }]
+                    },
+                    {
+                        time: "12:00",
+                        activity: "🍕 午餐：D.O.C Pizza & Mozzarella Bar - Carlton",
+                        desc: "品嚐墨爾本極受好評的正宗拿坡里柴燒窯烤披薩與莫札瑞拉起司。",
+                        maps: [{ label: "D.O.C 窯烤披薩", url: "https://www.google.com/maps/search/?api=1&query=D.O.C+Pizza+%26+Mozzarella+Bar+Carlton+VIC" }]
+                    },
+                    {
+                        time: "13:30",
+                        activity: "🏛️ 墨爾本博物館 (Melbourne Museum)",
+                        desc: "探索 Pauline Gandel 兒童藝廊與恐龍化石沙坑挖掘體驗（從飛馬酒店開車 4 分鐘或步行可達）。",
+                        maps: [{ label: "墨爾本博物館", url: "https://www.google.com/maps/search/?api=1&query=Melbourne+Museum+Carlton+VIC" }]
+                    },
+                    {
+                        time: "16:00",
+                        activity: "🏰 戶外放電：卡爾頓花園 (Carlton Gardens)",
+                        desc: "帶孩子在木造城堡巨型遊樂場自由跑跳放電，欣賞世界文化遺產建築景色。",
+                        maps: [{ label: "卡爾頓花園遊樂場", url: "https://www.google.com/maps/search/?api=1&query=Carlton+Gardens+Melbourne+VIC" }]
+                    },
+                    {
+                        time: "18:00",
+                        activity: "🍽️ 晚餐：市區特色餐廳",
+                        desc: "享用完美味晚餐後回飯店，開心地體驗飛馬酒店溫水游泳池。"
+                    }
                 ],
                 tips: "🏨 飛馬酒店優勢：緊鄰維多利亞市場 (步行 3 分鐘)，房間內含獨立廚房與微波爐，且設有室內溫水游泳池，非常適合親子客群！"
             },
@@ -177,12 +301,41 @@
                 meals: { b: "飯店自理 / 市區早餐", l: "San Remo 現炸鮮魚薯條", d: "Pino's Trattoria 義式餐館" },
                 highlights: ["Scienceworks 互動科學館", "San Remo 漁船直送炸魚薯條", "Nobbies 海邊棧道", "企鵝歸巢 Penguin Plus 看台"],
                 timeline: [
-                    { time: "09:30", activity: "🔬 墨爾本科學博物館 (Scienceworks)", desc: "讓小朋友暢玩體能測試、體感互動遊戲與震撼的雷電展覽體驗。" },
-                    { time: "12:30", activity: "🚗 啟程前往菲利普島 (Phillip Island)", desc: "刪除植物園拉車行程，留給交通極充裕的舒緩時間。" },
-                    { time: "14:00", activity: "🐟 午餐：San Remo Fishermans Co-Op", desc: "進入菲利普島前跨海大橋旁，享用漁船直送現炸鮮魚薯條 (Fish & Chips)。" },
-                    { time: "15:30", activity: "🌊 Nobbies Centre 海景木棧道", desc: "沿海邊木棧道散步，遠眺海蝕洞與壯麗南大洋波浪景緻。" },
-                    { time: "17:15", activity: "🐧 菲利普島企鵝歸巢 (Penguin Parade)", desc: "冬季日落早（約 17:12），17:30-18:00 即可觀賞世界上最小的野生藍企鵝成群從大海搖搖擺擺上岸歸巢！" },
-                    { time: "19:30", activity: "🍝 晚餐：Pino's Trattoria (Cowes)", desc: "位於 Cowes 小鎮的溫馨義式餐館，看完企鵝後享用熱騰騰的義大利麵再開車返回市區飯店。" }
+                    {
+                        time: "09:30",
+                        activity: "🔬 墨爾本科學博物館 (Scienceworks)",
+                        desc: "讓小朋友暢玩體能測試、體感互動遊戲與震撼的雷電展覽體驗。",
+                        maps: [{ label: "Scienceworks 科學館", url: "https://www.google.com/maps/search/?api=1&query=Scienceworks+Spotswood+VIC" }]
+                    },
+                    {
+                        time: "12:30",
+                        activity: "🚗 啟程前往菲利普島 (Phillip Island)",
+                        desc: "刪除植物園拉車行程，留給交通極充裕的舒緩時間。"
+                    },
+                    {
+                        time: "14:00",
+                        activity: "🐟 午餐：San Remo Fishermans Co-Op",
+                        desc: "進入菲利普島前跨海大橋旁，享用漁船直送現炸鮮魚薯條 (Fish & Chips)。",
+                        maps: [{ label: "San Remo 炸魚薯條", url: "https://www.google.com/maps/search/?api=1&query=San+Remo+Fishermans+Co-Op+VIC" }]
+                    },
+                    {
+                        time: "15:30",
+                        activity: "🌊 Nobbies Centre 海景木棧道",
+                        desc: "沿海邊木棧道散步，遠眺海蝕洞與壯麗南大洋波浪景緻。",
+                        maps: [{ label: "Nobbies Centre", url: "https://www.google.com/maps/search/?api=1&query=The+Nobbies+Centre+Phillip+Island+VIC" }]
+                    },
+                    {
+                        time: "17:15",
+                        activity: "🐧 菲利普島企鵝歸巢 (Penguin Parade)",
+                        desc: "冬季日落早（約 17:12），17:30-18:00 即可觀賞世界上最小的野生藍企鵝成群從大海搖搖擺擺上岸歸巢！",
+                        maps: [{ label: "企鵝歸巢園區", url: "https://www.google.com/maps/search/?api=1&query=Phillip+Island+Penguin+Parade+VIC" }]
+                    },
+                    {
+                        time: "19:30",
+                        activity: "🍝 晚餐：Pino's Trattoria (Cowes)",
+                        desc: "位於 Cowes 小鎮的溫馨義式餐館，看完企鵝後享用熱騰騰的義大利麵再開車返回市區飯店。",
+                        maps: [{ label: "Pino's Trattoria", url: "https://www.google.com/maps/search/?api=1&query=Pino%27s+Trattoria+Cowes+VIC" }]
+                    }
                 ],
                 tips: "🐧 企鵝歸巢提醒：預訂 Penguin Plus 升級看台離企鵝更近！海邊夜間體感溫度低且風大，請穿著最強保暖羽絨衣與毛帽；企鵝區全程嚴禁拍照。"
             },
@@ -197,11 +350,38 @@
                 meals: { b: "維多利亞市場早市 / 飯店", l: "維多利亞市場 Borek 烤餅 & 甜甜圈", d: "DFO 美食區 / 亞拉河畔景觀餐廳" },
                 highlights: ["維多利亞市場 & Chemist Warehouse", "澳佳寶魚油 TRS 退稅", "SEA LIFE 海洋生物水族館", "DFO South Wharf Outlet 週五特逛"],
                 timeline: [
-                    { time: "09:00", activity: "🛍️ 維多利亞市場 & Chemist Warehouse 藥局採買", desc: "從飛馬酒店步行僅 3 分鐘！在 Elizabeth St 門市掃貨澳佳寶魚油、蜂蜜與紀念品，滿 AU$300 可辦理 TRS 10% 退稅，買完輕鬆拎回房間放好。" },
-                    { time: "11:30", activity: "🌭 午餐：維多利亞市場美食街", desc: "品嚐現烤道地 Borek 烤餅與經典美式熱果醬甜甜圈 (Jam Doughnuts)。" },
-                    { time: "13:00", activity: "🐠 墨爾本海洋生物水族館 (SEA LIFE Melbourne Aquarium)", desc: "搭乘免費電車 (Free Tram) 直達，室內溫暖舒適，走過海底隧道與觀賞國王企鵝。" },
-                    { time: "16:00", activity: "🛍️ DFO South Wharf Outlet 採買", desc: "水族館步行跨過亞拉河人行橋即達！週五延長營業至 21:00，品牌齊全且逛街完全無壓力。" },
-                    { time: "18:30", activity: "🍽️ 晚餐：DFO South Wharf 美食區 / 亞拉河畔景觀餐廳", desc: "在亞拉河畔夜景旁享用美味晚餐後，搭乘免費電車返回飯店。" }
+                    {
+                        time: "09:00",
+                        activity: "🛍️ 維多利亞市場 & Chemist Warehouse 藥局採買",
+                        desc: "從飛馬酒店步行僅 3 分鐘！在 Elizabeth St 門市掃貨澳佳寶魚油、蜂蜜與紀念品，滿 AU$300 可辦理 TRS 10% 退稅，買完輕鬆拎回房間放好。",
+                        maps: [
+                            { label: "維多利亞市場", url: "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Market+Melbourne+VIC" },
+                            { label: "Chemist Warehouse 藥局", url: "https://www.google.com/maps/search/?api=1&query=Chemist+Warehouse+439+Elizabeth+St+Melbourne+VIC" }
+                        ]
+                    },
+                    {
+                        time: "11:30",
+                        activity: "🌭 午餐：維多利亞市場美食街",
+                        desc: "品嚐現烤道地 Borek 烤餅與經典美式熱果醬甜甜圈 (Jam Doughnuts)。",
+                        maps: [{ label: "維多利亞市場美食街", url: "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Market+Food+Court+Melbourne+VIC" }]
+                    },
+                    {
+                        time: "13:00",
+                        activity: "🐠 墨爾本海洋生物水族館 (SEA LIFE Melbourne Aquarium)",
+                        desc: "搭乘免費電車 (Free Tram) 直達，室內溫暖舒適，走過海底隧道與觀賞國王企鵝。",
+                        maps: [{ label: "SEA LIFE 水族館", url: "https://www.google.com/maps/search/?api=1&query=SEA+LIFE+Melbourne+Aquarium+VIC" }]
+                    },
+                    {
+                        time: "16:00",
+                        activity: "🛍️ DFO South Wharf Outlet 採買",
+                        desc: "水族館步行跨過亞拉河人行橋即達！週五延長營業至 21:00，品牌齊全且逛街完全無壓力。",
+                        maps: [{ label: "DFO South Wharf", url: "https://www.google.com/maps/search/?api=1&query=DFO+South+Wharf+Melbourne+VIC" }]
+                    },
+                    {
+                        time: "18:30",
+                        activity: "🍽️ 晚餐：DFO South Wharf 美食區 / 亞拉河畔景觀餐廳",
+                        desc: "在亞拉河畔夜景旁享用美味晚餐後，搭乘免費電車返回飯店。"
+                    }
                 ],
                 tips: "💊 退稅攻略：在 Chemist Warehouse 藥局同一發票消費滿 AU$300 以上，離境時可在機場 T2 辦理 10% TRS (Tourist Refund Scheme) 退稅！"
             },
@@ -216,12 +396,44 @@
                 meals: { b: "飯店自理 / 咖啡館", l: "Itali.co Sorrento 窯烤披薩", d: "Hotel Sorrento / 返市區晚餐" },
                 highlights: ["Arthurs Seat Eagle 高空纜車", "Enchanted Adventure 甜甜圈滑草", "Itali.co Sorrento 窯烤披薩", "Sorrento 香草切片蛋糕"],
                 timeline: [
-                    { time: "08:40", activity: "🚗 開車前往摩寧頓半島 (Mornington Peninsula)", desc: "由市區經 Peninsula Link 高速公路開車約 1 小時 10 分鐘。" },
-                    { time: "10:00", activity: "🚡 Arthurs Seat Eagle 高空纜車", desc: "搭乘瑞士全封閉式玻璃車廂，溫暖舒適地俯瞰菲利普港灣與墨爾本天際線全景。" },
-                    { time: "11:30", activity: "🌳 Enchanted Adventure (迷宮與冒險公園)", desc: "帶孩子挑戰巨型樹籬迷宮，體驗極速甜甜圈滑草坡 (Tube Slides) 的無窮樂趣！" },
-                    { time: "13:30", activity: "🍕 午餐：Itali.co Sorrento", desc: "位於索倫托海岸第一排，提供正宗拿坡里柴燒窯烤披薩與兒童菜單。" },
-                    { time: "15:00", activity: "🍰 漫步 Sorrento 海濱老街 & Just Fine Food 下午茶", desc: "漫步歐式海濱小鎮，在 Just Fine Food 品嚐名揚澳洲的「索倫托香草切片蛋糕 (Vanilla Slice)」！" },
-                    { time: "18:00", activity: "🍽️ 晚餐：Hotel Sorrento 景觀餐廳 / 返市區飯店", desc: "享用精緻海景晚餐後返回飛馬酒店，收拾明日返台行李。" }
+                    {
+                        time: "08:40",
+                        activity: "🚗 開車前往摩寧頓半島 (Mornington Peninsula)",
+                        desc: "由市區經 Peninsula Link 高速公路開車約 1 小時 10 分鐘。"
+                    },
+                    {
+                        time: "10:00",
+                        activity: "🚡 Arthurs Seat Eagle 高空纜車",
+                        desc: "搭乘瑞士全封閉式玻璃車廂，溫暖舒適地俯瞰菲利普港灣與墨爾本天際線全景。",
+                        maps: [{ label: "Arthurs Seat 纜車", url: "https://www.google.com/maps/search/?api=1&query=Arthurs+Seat+Eagle+VIC" }]
+                    },
+                    {
+                        time: "11:30",
+                        activity: "🌳 Enchanted Adventure (迷宮與冒險公園)",
+                        desc: "帶孩子挑戰巨型樹籬迷宮，體驗極速甜甜圈滑草坡 (Tube Slides) 的無窮樂趣！",
+                        maps: [{ label: "Enchanted Adventure", url: "https://www.google.com/maps/search/?api=1&query=Enchanted+Adventure+Arthurs+Seat+VIC" }]
+                    },
+                    {
+                        time: "13:30",
+                        activity: "🍕 午餐：Itali.co Sorrento",
+                        desc: "位於索倫托海岸第一排，提供正宗拿坡里柴燒窯烤披薩與兒童菜單。",
+                        maps: [{ label: "Itali.co Sorrento", url: "https://www.google.com/maps/search/?api=1&query=Itali.co+Sorrento+VIC" }]
+                    },
+                    {
+                        time: "15:00",
+                        activity: "🍰 漫步 Sorrento 海濱老街 & Just Fine Food 下午茶",
+                        desc: "漫步歐式海濱小鎮，在 Just Fine Food 品嚐名揚澳洲的「索倫托香草切片蛋糕 (Vanilla Slice)」！",
+                        maps: [
+                            { label: "Sorrento 老街", url: "https://www.google.com/maps/search/?api=1&query=Ocean+Beach+Rd+Sorrento+VIC" },
+                            { label: "Just Fine Food 甜點", url: "https://www.google.com/maps/search/?api=1&query=Just+Fine+Food+Sorrento+VIC" }
+                        ]
+                    },
+                    {
+                        time: "18:00",
+                        activity: "🍽️ 晚餐：Hotel Sorrento 景觀餐廳 / 返市區飯店",
+                        desc: "享用精緻海景晚餐後返回飛馬酒店，收拾明日返台行李。",
+                        maps: [{ label: "Hotel Sorrento", url: "https://www.google.com/maps/search/?api=1&query=Hotel+Sorrento+VIC" }]
+                    }
                 ],
                 tips: "🚡 纜車優點：Arthurs Seat Eagle 為全封閉式玻璃纜車，冬季搭乘完全不吹冷風，景色開闊迷人。"
             },
@@ -236,12 +448,40 @@
                 meals: { b: "飯店退房自理", l: "The Pancake Parlour 鬆餅套餐", d: "機上精緻餐點 / 機場美食" },
                 highlights: ["Highpoint 樂高認證專賣店", "The Pancake Parlour 美式鬆餅", "DFO Essendon 機場 Outlet", "18:15 MEL 機場還車", "21:50 華航 CI158 返台"],
                 timeline: [
-                    { time: "10:00", activity: "🏨 飛馬酒店退房，行李放後備箱", desc: "順暢開車上 CityLink 高速公路前往 Highpoint Shopping Centre (車程約 20 分鐘)。" },
-                    { time: "10:30", activity: "🧱 Highpoint Shopping Centre 巨型商場採買", desc: "帶兩位小朋友逛大型樂高認證專賣店 (Lego Certified Store) 及室內遊樂區。" },
-                    { time: "12:30", activity: "🥞 午餐：The Pancake Parlour Highpoint", desc: "復古美式鬆餅專賣店，提供小朋友最喜愛的快樂鬆餅套餐與巧克力醬。" },
-                    { time: "15:00", activity: "🛍️ DFO Essendon Outlet 最後採買", desc: "距離機場僅 10 分鐘車程！最後掃貨 Nike、Adidas 等運動童裝與澳洲伴手禮。" },
-                    { time: "18:15", activity: "⛽ 機場周邊加滿油，於 MEL T2 辦理還車", desc: "在 Terminal 2 歸還 SUV 車輛，輕鬆辦理托運、TRS 退稅與過安檢。" },
-                    { time: "21:50", activity: "🛫 搭乘華航 CI158 班機順利返抵台灣", desc: "帶著滿載的冬日親子賞雪與野生動物美好回憶，平安飛抵台灣！" }
+                    {
+                        time: "10:00",
+                        activity: "🏨 飛馬酒店退房，行李放後備箱",
+                        desc: "順暢開車上 CityLink 高速公路前往 Highpoint Shopping Centre (車程約 20 分鐘)。"
+                    },
+                    {
+                        time: "10:30",
+                        activity: "🧱 Highpoint Shopping Centre 巨型商場採買",
+                        desc: "帶兩位小朋友逛大型樂高認證專賣店 (Lego Certified Store) 及室內遊樂區。",
+                        maps: [{ label: "Highpoint 購物中心", url: "https://www.google.com/maps/search/?api=1&query=Highpoint+Shopping+Centre+Maribyrnong+VIC" }]
+                    },
+                    {
+                        time: "12:30",
+                        activity: "🥞 午餐：The Pancake Parlour Highpoint",
+                        desc: "復古美式鬆餅專賣店，提供小朋友最喜愛的快樂鬆餅套餐與巧克力醬。",
+                        maps: [{ label: "The Pancake Parlour", url: "https://www.google.com/maps/search/?api=1&query=The+Pancake+Parlour+Highpoint+VIC" }]
+                    },
+                    {
+                        time: "15:00",
+                        activity: "🛍️ DFO Essendon Outlet 最後採買",
+                        desc: "距離機場僅 10 分鐘車程！最後掃貨 Nike、Adidas 等運動童裝與澳洲伴手禮。",
+                        maps: [{ label: "DFO Essendon", url: "https://www.google.com/maps/search/?api=1&query=DFO+Essendon+VIC" }]
+                    },
+                    {
+                        time: "18:15",
+                        activity: "⛽ 機場周邊加滿油，於 MEL T2 辦理還車",
+                        desc: "在 Terminal 2 歸還 SUV 車輛，輕鬆辦理托運、TRS 退稅與過安檢。",
+                        maps: [{ label: "MEL 機場還車處", url: "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport+Car+Rental+Return+Tullamarine+VIC" }]
+                    },
+                    {
+                        time: "21:50",
+                        activity: "🛫 搭乘華航 CI158 班機順利返抵台灣",
+                        desc: "帶著滿載的冬日親子賞雪與野生動物美好回憶，平安飛抵台灣！"
+                    }
                 ],
                 tips: "⛽ 順路動線優勢：Day 9 退房後一路向北開往機場方向，Highpoint ➔ DFO Essendon ➔ 機場，順暢不走回頭路！"
             }
@@ -277,6 +517,28 @@
             { id: 15, text: "澳洲 4G/5G Optus/Telstra SIM卡 / eSIM", category: "electronics", checked: false },
             { id: 16, text: "行動電源 & 車載手機架 (自駕導航極重要)", category: "electronics", checked: false }
         ];
+
+        // Reusable Google Maps Pill Link Component
+        function MapLinkBadge({ label = "Google 地圖", url, compact = false }) {
+            return (
+                <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className={`inline-flex items-center gap-1 font-bold rounded-full border transition-all shadow-xs ${
+                        compact
+                            ? 'text-[11px] px-2.5 py-0.5 bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-600 hover:text-white hover:border-sky-600'
+                            : 'text-xs px-3 py-1 bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-600 hover:text-white hover:border-sky-600'
+                    }`}
+                    title={`在 Google 地圖開啟：${label}`}
+                >
+                    <span>📍</span>
+                    <span>{label}</span>
+                    <span className="text-[10px] opacity-80">↗</span>
+                </a>
+            );
+        }
 
         function App() {
             const [activeTab, setActiveTab] = useState('itinerary');
@@ -517,10 +779,21 @@
                                                     <h3 className="text-base font-bold text-stone-800">{dayObj.title}</h3>
                                                     <div className="space-y-2 pt-1">
                                                         {dayObj.timeline.map((t, idx) => (
-                                                            <div key={idx} className="text-xs bg-stone-50 p-2.5 rounded-xl border border-stone-100">
-                                                                <span className="font-bold text-amber-700 mr-2">{t.time}</span>
-                                                                <span className="font-bold text-stone-800">{t.activity}</span>
-                                                                <p className="text-stone-600 mt-0.5">{t.desc}</p>
+                                                            <div key={idx} className="text-xs bg-stone-50 p-3 rounded-xl border border-stone-100 space-y-1.5">
+                                                                <div className="flex items-center justify-between flex-wrap gap-2">
+                                                                    <div>
+                                                                        <span className="font-bold text-amber-700 mr-2">{t.time}</span>
+                                                                        <span className="font-bold text-stone-800">{t.activity}</span>
+                                                                    </div>
+                                                                    {t.maps && t.maps.length > 0 && (
+                                                                        <div className="flex flex-wrap gap-1.5">
+                                                                            {t.maps.map((m, mIdx) => (
+                                                                                <MapLinkBadge key={mIdx} label={m.label} url={m.url} compact={true} />
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <p className="text-stone-600">{t.desc}</p>
                                                             </div>
                                                         ))}
                                                     </div>
@@ -595,11 +868,20 @@
                                                     <div key={idx} className="relative">
                                                         <span className="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-emerald-700 border-2 border-white shadow"></span>
                                                         <div className="bg-stone-50 hover:bg-stone-100/80 transition-colors p-4 rounded-2xl border border-stone-200/80">
-                                                            <div className="flex items-center gap-2 flex-wrap">
-                                                                <span className="text-xs font-extrabold text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-lg">
-                                                                    {item.time}
-                                                                </span>
-                                                                <h4 className="text-sm font-bold text-stone-900">{item.activity}</h4>
+                                                            <div className="flex items-start justify-between gap-2 flex-wrap">
+                                                                <div className="flex items-center gap-2 flex-wrap">
+                                                                    <span className="text-xs font-extrabold text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-lg">
+                                                                        {item.time}
+                                                                    </span>
+                                                                    <h4 className="text-sm font-bold text-stone-900">{item.activity}</h4>
+                                                                </div>
+                                                                {item.maps && item.maps.length > 0 && (
+                                                                    <div className="flex flex-wrap gap-1.5">
+                                                                        {item.maps.map((m, mIdx) => (
+                                                                            <MapLinkBadge key={mIdx} label={m.label} url={m.url} compact={true} />
+                                                                        ))}
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                             <p className="text-xs text-stone-600 mt-1.5 leading-relaxed">{item.desc}</p>
                                                         </div>
@@ -623,13 +905,16 @@
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {/* Lavender Farm */}
                                     <div className="bg-white rounded-3xl p-6 shadow-sm border border-emerald-200 space-y-4">
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex items-center justify-between flex-wrap gap-2">
                                             <span className="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-3 py-1 rounded-full">
                                                 前半段郊區住宿 • 3晚
                                             </span>
                                             <span className="text-xs font-bold text-stone-500">06/27 – 06/30</span>
                                         </div>
-                                        <h2 className="text-xl font-extrabold text-stone-900">🏡 Lavender Farm (拉萬達農莊)</h2>
+                                        <div className="flex items-center justify-between flex-wrap gap-2">
+                                            <h2 className="text-xl font-extrabold text-stone-900">🏡 Lavender Farm (拉萬達農莊)</h2>
+                                            <MapLinkBadge label="Google 地圖" url="https://www.google.com/maps/search/?api=1&query=Lavender+Farm+Healesville+VIC" compact={true} />
+                                        </div>
                                         <p className="text-xs text-stone-600 leading-relaxed">
                                             位於亞拉河谷 (Yarra Valley) 靜謐庭園農莊，入住溫馨小木屋，推開門就是大片綠意草坪，孩子能近距離接觸自然與動物。
                                         </p>
@@ -642,15 +927,18 @@
 
                                     {/* Pegasus Aparthotel */}
                                     <div className="bg-white rounded-3xl p-6 shadow-sm border border-amber-200 space-y-4">
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex items-center justify-between flex-wrap gap-2">
                                             <span className="bg-amber-100 text-amber-800 text-xs font-extrabold px-3 py-1 rounded-full">
                                                 後半段市區住宿 • 4晚
                                             </span>
                                             <span className="text-xs font-bold text-stone-500">06/30 – 07/04</span>
                                         </div>
-                                        <h2 className="text-xl font-extrabold text-stone-900">🏨 Pegasus Aparthotel (飛馬公寓式酒店)</h2>
+                                        <div className="flex items-center justify-between flex-wrap gap-2">
+                                            <h2 className="text-xl font-extrabold text-stone-900">🏨 Pegasus Aparthotel (飛馬公寓式酒店)</h2>
+                                            <MapLinkBadge label="Google 地圖" url="https://www.google.com/maps/search/?api=1&query=Pegasus+Aparthotel+Melbourne+VIC" compact={true} />
+                                        </div>
                                         <p className="text-xs text-stone-600 leading-relaxed">
-                                            位處墨爾本市中心黃金地段，下樓即達維多利亞市場與免費電車站，兼具公寓家庭機能與飯店泳池設施。
+                                            位處墨爾本市中心黃金地段 (206 A'Beckett St)，下樓即達維多利亞市場與免費電車站，兼具公寓家庭機能與飯店泳池設施。
                                         </p>
                                         <ul className="space-y-2 text-xs text-stone-700 bg-amber-50/60 p-4 rounded-2xl border border-amber-100">
                                             <li>✅ <strong>獨立廚房與微波爐</strong>：方便幫孩子熱牛奶、準備宵夜或處理超市生鮮。</li>
@@ -664,29 +952,59 @@
                                 <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 space-y-4">
                                     <h3 className="text-lg font-extrabold text-stone-800">🚶‍♂️ 飛馬公寓式酒店 步行 15 分鐘內生活圈</h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200">
-                                            <div className="font-bold text-amber-800">🚋 免費電車站 (Free Tram Zone)</div>
-                                            <div className="text-stone-600 mt-1">步行 2 分鐘 (150m) ➔ 直達水族館、聯邦廣場</div>
+                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col justify-between gap-2">
+                                            <div>
+                                                <div className="font-bold text-amber-800">🚋 免費電車站 (Free Tram Zone)</div>
+                                                <div className="text-stone-600 mt-1">步行 2 分鐘 (150m) ➔ 直達水族館、聯邦廣場</div>
+                                            </div>
+                                            <div>
+                                                <MapLinkBadge label="電車站位置" url="https://www.google.com/maps/search/?api=1&query=William+St+%26+La+Trobe+St+Tram+Stop+Melbourne+VIC" compact={true} />
+                                            </div>
                                         </div>
-                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200">
-                                            <div className="font-bold text-emerald-800">🛍️ 維多利亞市場 (QVM)</div>
-                                            <div className="text-stone-600 mt-1">步行 3 分鐘 (200m) ➔ 早餐甜甜圈、伴手禮</div>
+                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col justify-between gap-2">
+                                            <div>
+                                                <div className="font-bold text-emerald-800">🛍️ 維多利亞市場 (QVM)</div>
+                                                <div className="text-stone-600 mt-1">步行 3 分鐘 (200m) ➔ 早餐甜甜圈、伴手禮</div>
+                                            </div>
+                                            <div>
+                                                <MapLinkBadge label="維多利亞市場" url="https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Market+Melbourne+VIC" compact={true} />
+                                            </div>
                                         </div>
-                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200">
-                                            <div className="font-bold text-emerald-800">🌳 旗杆花園 (Flagstaff Gardens)</div>
-                                            <div className="text-stone-600 mt-1">步行 4 分鐘 (300m) ➔ 散步看負鼠與綠地</div>
+                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col justify-between gap-2">
+                                            <div>
+                                                <div className="font-bold text-emerald-800">🌳 旗杆花園 (Flagstaff Gardens)</div>
+                                                <div className="text-stone-600 mt-1">步行 4 分鐘 (300m) ➔ 散步看負鼠與綠地</div>
+                                            </div>
+                                            <div>
+                                                <MapLinkBadge label="旗杆花園" url="https://www.google.com/maps/search/?api=1&query=Flagstaff+Gardens+Melbourne+VIC" compact={true} />
+                                            </div>
                                         </div>
-                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200">
-                                            <div className="font-bold text-amber-800">🧱 墨爾本中央車站 & 樂高店</div>
-                                            <div className="text-stone-600 mt-1">步行 7 分鐘 (550m) ➔ 大型購物中心與美食街</div>
+                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col justify-between gap-2">
+                                            <div>
+                                                <div className="font-bold text-amber-800">🧱 墨爾本中央車站 & 樂高店</div>
+                                                <div className="text-stone-600 mt-1">步行 7 分鐘 (550m) ➔ 大型購物中心與美食街</div>
+                                            </div>
+                                            <div>
+                                                <MapLinkBadge label="墨爾本中央車站" url="https://www.google.com/maps/search/?api=1&query=Melbourne+Central+Shopping+Centre+VIC" compact={true} />
+                                            </div>
                                         </div>
-                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200">
-                                            <div className="font-bold text-amber-800">📚 維多利亞州立圖書館</div>
-                                            <div className="text-stone-600 mt-1">步行 8 分鐘 (600m) ➔ 絕美八角形拱頂建築</div>
+                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col justify-between gap-2">
+                                            <div>
+                                                <div className="font-bold text-amber-800">📚 維多利亞州立圖書館</div>
+                                                <div className="text-stone-600 mt-1">步行 8 分鐘 (600m) ➔ 絕美八角形拱頂建築</div>
+                                            </div>
+                                            <div>
+                                                <MapLinkBadge label="州立圖書館" url="https://www.google.com/maps/search/?api=1&query=State+Library+Victoria+Melbourne+VIC" compact={true} />
+                                            </div>
                                         </div>
-                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200">
-                                            <div className="font-bold text-emerald-800">🏛️ 墨爾本博物館 & 卡爾頓花園</div>
-                                            <div className="text-stone-600 mt-1">開車 4 分鐘 / 步行 14 分鐘 ➔ 恐龍展與城堡公園</div>
+                                        <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col justify-between gap-2">
+                                            <div>
+                                                <div className="font-bold text-emerald-800">🏛️ 墨爾本博物館 & 卡爾頓花園</div>
+                                                <div className="text-stone-600 mt-1">開車 4 分鐘 / 步行 14 分鐘 ➔ 恐龍展與城堡公園</div>
+                                            </div>
+                                            <div>
+                                                <MapLinkBadge label="墨爾本博物館" url="https://www.google.com/maps/search/?api=1&query=Melbourne+Museum+Carlton+VIC" compact={true} />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -694,10 +1012,19 @@
                                 {/* Parking Memo */}
                                 <div className="bg-stone-800 text-stone-100 rounded-3xl p-6 space-y-3">
                                     <h3 className="text-base font-bold text-amber-300">🅿️ 飛馬酒店與市區備用停車場備忘</h3>
-                                    <ul className="space-y-2 text-xs text-stone-300 leading-relaxed">
-                                        <li>• <strong>飛馬酒店專用停車</strong>：酒店設有地下停車場 (On-site Undercover Parking，需收費)，預訂房間時記得備註預留車位。</li>
-                                        <li>• <strong>Day 5 墨爾本博物館</strong>：可直接停放於博物館地下停車場 (Museum Car Park)。</li>
-                                        <li>• <strong>Day 7 水族館特約停車</strong>：Nationwide Parking (474 Flinders St)，距離水族館步行僅 2 分鐘。</li>
+                                    <ul className="space-y-2.5 text-xs text-stone-300 leading-relaxed">
+                                        <li className="flex items-center justify-between flex-wrap gap-2">
+                                            <span>• <strong>飛馬酒店專用停車</strong>：酒店設有地下停車場 (On-site Undercover Parking，需收費)，預訂房間時記得備註預留車位。</span>
+                                            <MapLinkBadge label="飛馬酒店停車場" url="https://www.google.com/maps/search/?api=1&query=Pegasus+Aparthotel+Melbourne+VIC" compact={true} />
+                                        </li>
+                                        <li className="flex items-center justify-between flex-wrap gap-2">
+                                            <span>• <strong>Day 5 墨爾本博物館</strong>：可直接停放於博物館地下停車場 (Museum Car Park)。</span>
+                                            <MapLinkBadge label="Museum Car Park" url="https://www.google.com/maps/search/?api=1&query=Melbourne+Museum+Car+Park+Carlton+VIC" compact={true} />
+                                        </li>
+                                        <li className="flex items-center justify-between flex-wrap gap-2">
+                                            <span>• <strong>Day 7 水族館特約停車</strong>：Nationwide Parking (474 Flinders St)，距離水族館步行僅 2 分鐘。</span>
+                                            <MapLinkBadge label="474 Flinders St 停車場" url="https://www.google.com/maps/search/?api=1&query=474+Flinders+St+Melbourne+VIC" compact={true} />
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -856,7 +1183,10 @@
                                 {/* Snow Gear & Layering Guide */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="bg-white rounded-3xl p-6 shadow-sm border border-sky-200 space-y-3">
-                                        <h3 className="text-base font-extrabold text-sky-900">🎿 Marysville 雪具租借省錢省力攻略</h3>
+                                        <div className="flex items-center justify-between flex-wrap gap-2">
+                                            <h3 className="text-base font-extrabold text-sky-900">🎿 Marysville 雪具租借省錢省力攻略</h3>
+                                            <MapLinkBadge label="雪具店地圖" url="https://www.google.com/maps/search/?api=1&query=Cross+Country+Ski+Hire+Marysville+VIC" compact={true} />
+                                        </div>
                                         <p className="text-xs text-stone-600 leading-relaxed">
                                             6-7 月為墨爾本冬季（氣溫約 6°C – 14°C，雪場約 -2°C – 4°C），不需從台灣扛厚重雪靴佔行李箱！
                                         </p>
