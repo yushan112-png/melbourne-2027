@@ -258,18 +258,18 @@
             { id: 7, month: "2027年 5月末-6月", text: "預訂 Lake Mountain Alpine Resort 車輛入園通行證", checked: false },
         ];
 
-        // Default packing items
+        // Default packing items (all start unchecked)
         const PACKING_ITEMS_DEFAULT = [
-            { id: 1, text: "護照（有效期限 6 個月以上）", category: "documents", checked: true },
-            { id: 2, text: "澳洲 ETA 電子簽證 (App 電子檔 & 列印備份)", category: "documents", checked: true },
-            { id: 3, text: "台灣駕照正本 + 國際駕照 (IDP)", category: "documents", checked: true },
+            { id: 1, text: "護照（有效期限 6 個月以上）", category: "documents", checked: false },
+            { id: 2, text: "澳洲 ETA 電子簽證 (App 電子檔 & 列印備份)", category: "documents", checked: false },
+            { id: 3, text: "台灣駕照正本 + 國際駕照 (IDP)", category: "documents", checked: false },
             { id: 4, text: "信用卡 (具備感應支付/Apple Pay) & 少許澳幣現金", category: "documents", checked: false },
-            { id: 5, text: "租車預約單 & 景點門票 (小火車 / 企鵝歸巢 Penguin Plus)", category: "documents", checked: true },
+            { id: 5, text: "租車預約單 & 景點門票 (小火車 / 企鵝歸巢 Penguin Plus)", category: "documents", checked: false },
             { id: 6, text: "保暖發熱衣 & 輕量羽絨外套 (洋蔥式穿法)", category: "clothing", checked: false },
             { id: 7, text: "湖山滑雪用：防水防風外套、防水手套、毛帽、保暖面罩", category: "clothing", checked: false },
             { id: 8, text: "防滑防水短靴 / 舒適健走鞋 (可至 Marysville 租雪靴)", category: "clothing", checked: false },
             { id: 9, text: "兒童保暖圍巾、耳罩與多備替換長褲 2-3 條", category: "clothing", checked: false },
-            { id: 10, text: "兒童安全座椅 / 增高墊 (租車櫃檯加購確認 AS/NZS 1754)", category: "kids", checked: true },
+            { id: 10, text: "兒童安全座椅 / 增高墊 (租車櫃檯加購確認 AS/NZS 1754)", category: "kids", checked: false },
             { id: 11, text: "可折疊輕便推車與防風防雨罩", category: "kids", checked: false },
             { id: 12, text: "保溫水壺與車上兒童備用零食 / 餅乾", category: "kids", checked: false },
             { id: 13, text: "兒童常備藥品 (退燒、止咳、暈車藥、創可貼)", category: "kids", checked: false },
@@ -292,7 +292,7 @@
             });
             const [packingItems, setPackingItems] = useState(() => {
                 try {
-                    const saved = localStorage.getItem('melbourne9d_packing');
+                    const saved = localStorage.getItem('melbourne9d_packing_v2');
                     return saved ? JSON.parse(saved) : PACKING_ITEMS_DEFAULT;
                 } catch { return PACKING_ITEMS_DEFAULT; }
             });
@@ -326,7 +326,7 @@
             }, [milestones]);
 
             useEffect(() => {
-                try { localStorage.setItem('melbourne9d_packing', JSON.stringify(packingItems)); } catch {}
+                try { localStorage.setItem('melbourne9d_packing_v2', JSON.stringify(packingItems)); } catch {}
             }, [packingItems]);
 
             useEffect(() => {
@@ -356,6 +356,10 @@
 
             const togglePacking = (id) => {
                 setPackingItems(prev => prev.map(p => p.id === id ? { ...p, checked: !p.checked } : p));
+            };
+
+            const clearAllPacking = () => {
+                setPackingItems(prev => prev.map(p => ({ ...p, checked: false })));
             };
 
             const addExpense = (e) => {
@@ -724,8 +728,10 @@
                                     {milestones.map(m => (
                                         <div
                                             key={m.id}
+                                            role="checkbox"
+                                            aria-checked={m.checked}
                                             onClick={() => toggleMilestone(m.id)}
-                                            className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between gap-3 ${
+                                            className={`p-4 rounded-2xl border cursor-pointer select-none transition-all flex items-center justify-between gap-3 ${
                                                 m.checked
                                                     ? 'bg-emerald-50/60 border-emerald-200 text-stone-500'
                                                     : 'bg-white border-stone-200 hover:border-amber-400 text-stone-800'
@@ -735,8 +741,8 @@
                                                 <input
                                                     type="checkbox"
                                                     checked={m.checked}
-                                                    onChange={() => {}}
-                                                    className="w-4 h-4 accent-emerald-700 rounded cursor-pointer"
+                                                    readOnly
+                                                    className="w-4 h-4 accent-emerald-700 rounded cursor-pointer pointer-events-none"
                                                 />
                                                 <div>
                                                     <span className="inline-block text-[11px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded mb-1">
@@ -821,62 +827,80 @@
                                     </div>
                                 </div>
 
-                                {/* Key Traffic & Child Seat Rules */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                {/* Traffic Rules & Child Seat Grid */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 space-y-3">
-                                        <h3 className="text-base font-extrabold text-stone-800">🚋 澳洲右駕與電車禮讓規則</h3>
-                                        <ul className="space-y-2.5 text-xs text-stone-700 leading-relaxed">
-                                            <li>• <strong>靠左行駛</strong>：口訣「駕駛座靠路中央、左轉小彎、右轉大彎」，雨刷與方向燈與台灣相反。</li>
-                                            <li>• <strong>電車停靠絕對禮讓</strong>：當路面電車 (Tram) 停下開啟車門讓乘客上下車時，後方車輛<strong>必須停在電車後方黃線/車尾處等待</strong>，嚴禁超車！</li>
-                                            <li>• <strong>圓環 (Roundabout)</strong>：進入圓環前一律禮讓<strong>右側</strong>已進入圓環的來車。</li>
-                                            <li>• <strong>高速公路過路費 (CityLink)</strong>：墨爾本收費道路無現金收費站，租車公司會透過車牌自動扣款 (e-TAG) 並於信用卡請款。</li>
+                                        <h3 className="text-base font-extrabold text-stone-800">🚋 路面電車 (Tram) 禮讓與路權規則</h3>
+                                        <ul className="space-y-2 text-xs text-stone-700 leading-relaxed">
+                                            <li>• <strong>電車停靠上下客時（最嚴格取締）</strong>：當路面電車在路中央停下並開啟車門（或車側閃爍「STOP」燈號）時，後方所有車輛<strong>必須停在電車車尾後方至少 2 公尺處（或黃色標線後）</strong>，直到車門關閉且乘客全數離開路面才能通行。</li>
+                                            <li>• <strong>GIVE WAY 讓路標誌</strong>：遇到倒三角形讓路標誌或圓環 (Roundabout) 時，務必禮讓<strong>右側來車</strong>與圓環內車輛優先通行。</li>
+                                            <li>• <strong>電子收費公路 (CityLink)</strong>：墨爾本機場往返市區及 Highpoint 路段會經過 CityLink，租車公司通常已內建電子感應器 (e-TAG) 並於還車後自動從信用卡扣款。</li>
                                         </ul>
                                     </div>
 
-                                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 space-y-3">
-                                        <h3 className="text-base font-extrabold text-stone-800">👶 兒童安全座椅法規 (5歲 & 8歲)</h3>
-                                        <ul className="space-y-2.5 text-xs text-stone-700 leading-relaxed">
-                                            <li>• <strong>5 歲小朋友 (強制規定)</strong>：維多利亞州規定 4–7 歲兒童<strong>必須使用</strong>前向式安全座椅或兒童增高墊 (Booster Seat)，且<strong>禁止坐副駕駛座</strong>。</li>
-                                            <li>• <strong>8 歲小朋友 (安全建議)</strong>：滿 7 歲法律雖允許使用成人安全帶，但身高未滿 145cm 強烈建議同樣加購增高墊。</li>
-                                            <li>• <strong>重要提醒 (AS/NZS 1754)</strong>：澳洲法律僅承認符合澳洲認證標章的安全座椅，<strong>切勿從台灣自帶座椅</strong>，請直接向租車公司加購 2 張座椅。</li>
+                                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-emerald-200 space-y-3">
+                                        <h3 className="text-base font-extrabold text-emerald-900">👶 維多利亞州兒童安全座椅法規</h3>
+                                        <ul className="space-y-2 text-xs text-stone-700 leading-relaxed">
+                                            <li>• <strong>5 歲小朋友（強制規範）</strong>：4 歲至未滿 7 歲兒童<strong>強制使用</strong>前向式安全座椅或兒童增高墊 (Booster Seat)，且<strong>絕對不可坐副駕駛座</strong>。</li>
+                                            <li>• <strong>8 歲小朋友（建議使用增高墊）</strong>：滿 7 歲法律允許使用成人安全帶，但若身高未滿 145cm，建議依然租用增高墊以避免安全帶勒頸。</li>
+                                            <li>• <strong>⚠️ 不可自帶台灣安全座椅</strong>：澳洲法律僅認可貼有 <strong>AS/NZS 1754</strong> 認證貼紙的當地座椅，請務必於租車櫃檯直接加購 2 張座椅。</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* TAB 5: PACKING LIST */}
+                        {/* TAB 5: WINTER OUTFIT & PACKING */}
                         {activeTab === 'packing' && (
                             <div className="space-y-6">
-                                {/* Winter Dressing Guide */}
-                                <div className="bg-gradient-to-r from-sky-900 to-emerald-900 text-white rounded-3xl p-6 shadow-sm space-y-3">
-                                    <h2 className="text-lg font-extrabold">🧥 墨爾本 6–7 月冬日洋蔥式穿法 & 玩雪裝備攻略</h2>
-                                    <p className="text-xs text-sky-100 leading-relaxed">
-                                        6 月底至 7 月初為墨爾本冬季，市區氣溫約 <strong>6°C – 14°C</strong>（室內與電車均有暖氣），Lake Mountain 雪場則約 <strong>-2°C – 4°C</strong>。
-                                    </p>
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
-                                        <div className="bg-white/10 p-3.5 rounded-2xl border border-white/15">
-                                            <div className="font-bold text-amber-300">1️⃣ 內層：吸濕排汗發熱衣</div>
-                                            <div className="text-sky-100 mt-1">貼身發熱衣或美麗諾羊毛衛生衣，避免流汗吹風著涼。</div>
-                                        </div>
-                                        <div className="bg-white/10 p-3.5 rounded-2xl border border-white/15">
-                                            <div className="font-bold text-amber-300">2️⃣ 中層：刷毛 / 輕羽絨保暖</div>
-                                            <div className="text-sky-100 mt-1">進入博物館、水族館與餐廳有暖氣時方便穿脫。</div>
-                                        </div>
-                                        <div className="bg-white/10 p-3.5 rounded-2xl border border-white/15">
-                                            <div className="font-bold text-amber-300">3️⃣ 外層：防風防水外套 & 雪具</div>
-                                            <div className="text-sky-100 mt-1">Day 3 順路在 Marysville 租防水雪靴、雪褲與雪橇最省行李空間！</div>
-                                        </div>
+                                {/* Snow Gear & Layering Guide */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-sky-200 space-y-3">
+                                        <h3 className="text-base font-extrabold text-sky-900">🎿 Marysville 雪具租借省錢省力攻略</h3>
+                                        <p className="text-xs text-stone-600 leading-relaxed">
+                                            6-7 月為墨爾本冬季（氣溫約 6°C – 14°C，雪場約 -2°C – 4°C），不需從台灣扛厚重雪靴佔行李箱！
+                                        </p>
+                                        <ul className="space-y-1.5 text-xs text-stone-700 bg-sky-50/70 p-4 rounded-2xl border border-sky-100">
+                                            <li>• <strong>推薦店家</strong>：Cross Country Ski Hire Marysville</li>
+                                            <li>• <strong>現場租借項目</strong>：防水雪靴、防水雪褲、Toboggan 滑雪橇</li>
+                                            <li>• <strong>自備貼身配件</strong>：防水保暖手套、毛帽、厚羊毛襪、太陽眼鏡（雪地反光強）</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-amber-200 space-y-3">
+                                        <h3 className="text-base font-extrabold text-amber-900">🧅 墨爾本冬日「洋蔥式 3 層穿搭法」</h3>
+                                        <p className="text-xs text-stone-600 leading-relaxed">
+                                            墨爾本室內、車內、博物館與商場暖氣非常充足，內層切勿穿太厚重毛衣以免流汗著涼：
+                                        </p>
+                                        <ul className="space-y-1.5 text-xs text-stone-700 bg-amber-50/70 p-4 rounded-2xl border border-amber-100">
+                                            <li>• <strong>內層（排汗保暖）</strong>：薄款發熱衣或長袖純棉上衣</li>
+                                            <li>• <strong>中層（蓄熱鎖溫）</strong>：刷毛衛衣 (Fleece) 或輕量針織衫（進室內脫外套剛剛好）</li>
+                                            <li>• <strong>外層（防風防水）</strong>：防風防水羽絨外套（菲利普島夜觀企鵝海風大必備）</li>
+                                        </ul>
                                     </div>
                                 </div>
 
                                 {/* Interactive Packing Checklist */}
                                 <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 space-y-5">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-lg font-extrabold text-stone-800">🧳 親子冬日行李互動打包清單</h3>
-                                        <span className="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-3 py-1 rounded-full">
-                                            已打包：{packingDone} / {packingItems.length}
-                                        </span>
+                                    <div className="flex items-center justify-between flex-wrap gap-2">
+                                        <div>
+                                            <h3 className="text-lg font-extrabold text-stone-800">🧳 親子冬日行李互動打包清單</h3>
+                                            <p className="text-xs text-stone-500 mt-0.5">點擊項目即可勾選或取消勾選，狀態會自動儲存於瀏覽器中。</p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {packingDone > 0 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={clearAllPacking}
+                                                    className="text-xs font-bold text-stone-600 hover:text-red-600 bg-stone-100 hover:bg-red-50 px-3 py-1 rounded-full transition-colors"
+                                                >
+                                                    ↺ 全部取消勾選
+                                                </button>
+                                            )}
+                                            <span className="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-3 py-1 rounded-full">
+                                                已打包：{packingDone} / {packingItems.length}
+                                            </span>
+                                        </div>
                                     </div>
 
                                     {[
@@ -891,10 +915,12 @@
                                             </h4>
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                 {packingItems.filter(p => p.category === cat.key).map(item => (
-                                                    <label
+                                                    <div
                                                         key={item.id}
+                                                        role="checkbox"
+                                                        aria-checked={item.checked}
                                                         onClick={() => togglePacking(item.id)}
-                                                        className={`flex items-center gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition-colors ${
+                                                        className={`flex items-center gap-2.5 p-3 rounded-xl border text-xs cursor-pointer select-none transition-colors ${
                                                             item.checked
                                                                 ? 'bg-stone-50 border-stone-200 text-stone-400 line-through'
                                                                 : 'bg-white border-stone-200 hover:border-emerald-400 text-stone-800 font-medium'
@@ -903,11 +929,11 @@
                                                         <input
                                                             type="checkbox"
                                                             checked={item.checked}
-                                                            onChange={() => {}}
-                                                            className="w-4 h-4 accent-emerald-700 rounded cursor-pointer"
+                                                            readOnly
+                                                            className="w-4 h-4 accent-emerald-700 rounded cursor-pointer pointer-events-none"
                                                         />
                                                         <span>{item.text}</span>
-                                                    </label>
+                                                    </div>
                                                 ))}
                                             </div>
                                         </div>
